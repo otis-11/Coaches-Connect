@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "CoachConnect — The Professional Network for Coaches",
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-[#F8FAFC] antialiased">{children}</body>
+      <body className="min-h-screen bg-[#F8FAFC] antialiased">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

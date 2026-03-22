@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import { useAuth } from "@/lib/AuthContext";
 import {
   GitBranch,
   ArrowRight,
@@ -22,8 +24,37 @@ const steps = [
 ];
 
 export default function SignupPage() {
+  const { signUp } = useAuth();
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
-  const [sport, setSport] = useState<"football" | "basketball" | "">("");
+  const [sport, setSport] = useState<"football" | "basketball" | "">("")
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [signupLoading, setSignupLoading] = useState(false);
+
+  const handleSignUp = async () => {
+    if (!firstName || !lastName || !email || !sport) {
+      setError("Please fill in all required fields in step 1.");
+      setCurrentStep(0);
+      return;
+    }
+    if (!password || password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+    setSignupLoading(true);
+    setError("");
+    const { error } = await signUp(email, password, firstName, lastName, sport);
+    if (error) {
+      setError(error.message);
+      setSignupLoading(false);
+    } else {
+      router.push("/dashboard");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-navy-900 text-white">
@@ -80,6 +111,11 @@ export default function SignupPage() {
 
         {/* Form */}
         <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+          {error && (
+            <div className="mb-6 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+              {error}
+            </div>
+          )}
           {currentStep === 0 && (
             <div className="space-y-6">
               <h2 className="font-display font-bold text-xl mb-6">
@@ -94,6 +130,8 @@ export default function SignupPage() {
                   <input
                     type="text"
                     placeholder="Marcus"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all"
                   />
                 </div>
@@ -104,6 +142,8 @@ export default function SignupPage() {
                   <input
                     type="text"
                     placeholder="Williams"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all"
                   />
                 </div>
@@ -116,6 +156,21 @@ export default function SignupPage() {
                 <input
                   type="email"
                   placeholder="marcus@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  placeholder="Min. 6 characters"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all"
                 />
               </div>
@@ -339,13 +394,14 @@ export default function SignupPage() {
                   You can always update your profile later. Start connecting with
                   coaches and exploring opportunities.
                 </p>
-                <Link
-                  href="/dashboard"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-teal-500 text-white font-display font-bold text-sm rounded-lg hover:bg-teal-400 transition-all"
+                <button
+                  onClick={handleSignUp}
+                  disabled={signupLoading}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-teal-500 text-white font-display font-bold text-sm rounded-lg hover:bg-teal-400 transition-all disabled:opacity-50"
                 >
-                  Go to Dashboard
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
+                  {signupLoading ? "Creating account..." : "Create Account & Go to Dashboard"}
+                  {!signupLoading && <ArrowRight className="w-4 h-4" />}
+                </button>
               </div>
             </div>
           )}
