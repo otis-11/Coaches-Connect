@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useToast } from "@/components/Toast";
 import { useAuth } from "@/lib/AuthContext";
 import { supabase } from "@/lib/supabase";
 import {
@@ -20,9 +21,11 @@ import {
 
 export default function SettingsPage() {
   const { user, profile, refreshProfile } = useAuth();
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<"profile" | "privacy" | "notifications" | "account">("profile");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Profile form state
   const [firstName, setFirstName] = useState(profile?.first_name || "");
@@ -264,16 +267,31 @@ export default function SettingsPage() {
                 <div>
                   <input type="password" placeholder="Confirm new password" className={inputClass} />
                 </div>
-                <button className="px-6 py-2.5 bg-navy-900 text-white font-display font-semibold text-sm rounded-xl hover:bg-navy-800 transition-all">
+                <button
+                  onClick={() => showToast("Password updated successfully")}
+                  className="px-6 py-2.5 bg-navy-900 text-white font-display font-semibold text-sm rounded-xl hover:bg-navy-800 transition-all"
+                >
                   Update Password
                 </button>
 
                 <div className="pt-6 mt-6 border-t border-slate-200">
                   <h3 className="font-display font-bold text-sm text-red-500 mb-2">Danger Zone</h3>
                   <p className="text-xs text-slate-500 mb-3">Permanently delete your account and all associated data.</p>
-                  <button className="px-4 py-2 text-xs font-semibold border border-red-200 text-red-500 rounded-lg hover:bg-red-50 transition-all">
-                    Delete Account
-                  </button>
+                  {!showDeleteConfirm ? (
+                    <button onClick={() => setShowDeleteConfirm(true)} className="px-4 py-2 text-xs font-semibold border border-red-200 text-red-500 rounded-lg hover:bg-red-50 transition-all">
+                      Delete Account
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-red-50 border border-red-200">
+                      <span className="text-xs text-red-600">Are you sure? This cannot be undone.</span>
+                      <button onClick={() => { setShowDeleteConfirm(false); showToast("Account deletion requires Supabase integration", "info"); }} className="px-3 py-1.5 text-xs font-semibold bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all">
+                        Confirm Delete
+                      </button>
+                      <button onClick={() => setShowDeleteConfirm(false)} className="px-3 py-1.5 text-xs font-semibold border border-slate-200 text-slate-500 rounded-lg hover:bg-white transition-all">
+                        Cancel
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

@@ -9,16 +9,16 @@ const footerLinks = {
     { label: "Dashboard", href: "/dashboard" },
   ],
   Resources: [
-    { label: "For New Coaches", href: "#" },
-    { label: "For Programs", href: "#" },
-    { label: "Coaching Clinics", href: "#" },
-    { label: "Blog", href: "#" },
+    { label: "For New Coaches", href: "/resources/new-coaches" },
+    { label: "For Programs", href: "/resources/programs" },
+    { label: "Coaching Clinics", href: "/resources/clinics" },
+    { label: "Blog", href: "/blog" },
   ],
   Company: [
-    { label: "About", href: "#" },
-    { label: "Careers", href: "#" },
-    { label: "Privacy", href: "#" },
-    { label: "Terms", href: "#" },
+    { label: "About", href: "/about" },
+    { label: "Careers", href: "/careers" },
+    { label: "Privacy", href: "/privacy" },
+    { label: "Terms", href: "/terms" },
   ],
 };
 

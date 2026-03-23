@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useToast } from "@/components/Toast";
 import Link from "next/link";
 import {
   GraduationCap,
@@ -12,6 +14,9 @@ import {
   Users,
   Briefcase,
   TrendingUp,
+  UserPlus,
+  MessageSquare,
+  Award,
 } from "lucide-react";
 
 const footballPaths = [
@@ -77,7 +82,17 @@ const insights = [
   { icon: Star, title: "Key Accelerator", text: "Coordinator experience at any level significantly increases HC opportunities" },
 ];
 
+const mockMentors = [
+  { id: "m1", name: "Coach Ray Thompson", initials: "RT", title: "Head Coach, Ohio State", sport: "football", specialty: "Offensive Strategy", experience: "25+ years", match: "95%", reason: "Same coaching tree lineage, overlapping scheme philosophy" },
+  { id: "m2", name: "Geno Auriemma", initials: "GA", title: "Head Coach, UConn", sport: "basketball", specialty: "Program Building", experience: "40+ years", match: "88%", reason: "Shared conference connections and player development approach" },
+  { id: "m3", name: "Coach Dawn Staley", initials: "DS", title: "Head Coach, South Carolina", sport: "basketball", specialty: "Recruiting & Culture", experience: "20+ years", match: "82%", reason: "Common recruiting region and defensive philosophy" },
+  { id: "m4", name: "Coach David Shaw", initials: "DSh", title: "Former HC, Stanford", sport: "football", specialty: "NFL Preparation", experience: "30+ years", match: "79%", reason: "Shared focus on player development and pro-style schemes" },
+];
+
 export default function CareerPathsPage() {
+  const { showToast } = useToast();
+  const [mentorRequested, setMentorRequested] = useState<Record<string, boolean>>({});
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <Navbar />
@@ -172,6 +187,62 @@ export default function CareerPathsPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Mentorship Matching */}
+        <div className="mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <Award className="w-5 h-5 text-gold-400" />
+            <h2 className="font-display text-xl font-bold text-navy-900">Mentorship Matching</h2>
+          </div>
+          <p className="text-sm text-slate-500 mb-6 max-w-xl">
+            Based on your coaching tree, career stage, and philosophy, these experienced coaches are strong mentorship matches.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {mockMentors.map((mentor) => (
+              <div key={mentor.id} className="bg-white rounded-2xl border border-slate-200/80 p-5 hover:border-teal-200 hover:shadow-md transition-all">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gold-400/20 to-gold-400/5 flex items-center justify-center text-gold-400 font-display font-bold text-sm shrink-0">
+                    {mentor.initials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-display font-bold text-sm text-navy-900">{mentor.name}</span>
+                      <span className="px-1.5 py-0.5 rounded bg-teal-50 text-teal-600 text-[10px] font-bold">{mentor.match} match</span>
+                    </div>
+                    <div className="text-xs text-slate-500 mt-0.5">{mentor.title}</div>
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="text-[10px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">{mentor.specialty}</span>
+                      <span className="text-[10px] text-slate-400">{mentor.experience}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded ${mentor.sport === "football" ? "bg-amber-50 text-amber-600" : "bg-orange-50 text-orange-600"}`}>
+                        {mentor.sport === "football" ? "🏈" : "🏀"}
+                      </span>
+                    </div>
+                    <div className="mt-2 text-[11px] text-slate-500 italic">{mentor.reason}</div>
+                  </div>
+                  <div className="flex flex-col gap-1.5 shrink-0">
+                    <button
+                      onClick={() => { setMentorRequested((p) => ({ ...p, [mentor.id]: true })); showToast(`Mentorship request sent to ${mentor.name}`); }}
+                      disabled={mentorRequested[mentor.id]}
+                      className={`flex items-center gap-1 px-3 py-1.5 text-[11px] font-semibold rounded-lg transition-all ${
+                        mentorRequested[mentor.id]
+                          ? "bg-teal-50 text-teal-600 border border-teal-200"
+                          : "bg-teal-500 text-white hover:bg-teal-400"
+                      }`}
+                    >
+                      <UserPlus className="w-3 h-3" /> {mentorRequested[mentor.id] ? "Requested" : "Request"}
+                    </button>
+                    <button
+                      onClick={() => showToast(`Opening message to ${mentor.name}...`)}
+                      className="flex items-center gap-1 px-3 py-1.5 text-[11px] font-semibold border border-slate-200 text-slate-500 rounded-lg hover:bg-slate-50 transition-all"
+                    >
+                      <MessageSquare className="w-3 h-3" /> Message
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

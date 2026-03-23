@@ -18,6 +18,7 @@ import {
   Shield,
   ChevronDown,
   Network,
+  Zap,
 } from "lucide-react";
 
 const publicNavLinks = [
@@ -34,6 +35,7 @@ const authNavLinks = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/network", label: "Network", icon: Network },
   { href: "/messages", label: "Messages", icon: MessageSquare },
+  { href: "/alerts", label: "Alerts", icon: Zap },
 ];
 
 export default function Navbar() {

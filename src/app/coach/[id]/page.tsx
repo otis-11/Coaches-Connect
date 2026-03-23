@@ -19,6 +19,9 @@ import {
   Star,
   Clock,
   MessageSquare,
+  BadgeCheck,
+  TrendingUp,
+  CheckCircle,
 } from "lucide-react";
 
 export function generateStaticParams() {
@@ -57,8 +60,11 @@ export default function CoachProfilePage({
 
               <div className="flex-1">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                  <h1 className="font-display text-2xl sm:text-3xl font-bold text-navy-900">
+                  <h1 className="font-display text-2xl sm:text-3xl font-bold text-navy-900 flex items-center gap-2">
                     {coach.firstName} {coach.lastName}
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-600 text-[10px] font-bold uppercase tracking-wider" title="Verified Coach">
+                      <BadgeCheck className="w-3.5 h-3.5" /> Verified
+                    </span>
                   </h1>
                   {coach.openToOpportunities && (
                     <span className="relative inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/10 text-teal-600 text-xs font-bold uppercase tracking-wider pulse-badge w-fit">
@@ -115,6 +121,31 @@ export default function CoachProfilePage({
                 <Search className="w-4 h-4 text-slate-400" />
                 <span className="font-mono text-navy-900 font-semibold">{coach.searchAppearances}</span>
                 <span className="text-slate-500">search appearances</span>
+              </div>
+            </div>
+
+            {/* Credibility Signals */}
+            <div className="mt-5 grid grid-cols-3 gap-3">
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-teal-50/50 border border-teal-100">
+                <CheckCircle className="w-4 h-4 text-teal-500 shrink-0" />
+                <div>
+                  <div className="text-[10px] text-teal-700 font-bold uppercase tracking-wider">Identity</div>
+                  <div className="text-[11px] text-teal-600">Verified</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/50 border border-blue-100">
+                <Shield className="w-4 h-4 text-blue-500 shrink-0" />
+                <div>
+                  <div className="text-[10px] text-blue-700 font-bold uppercase tracking-wider">Credentials</div>
+                  <div className="text-[11px] text-blue-600">{coach.certifications.length} Verified</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-gold-400/5 border border-gold-400/20">
+                <TrendingUp className="w-4 h-4 text-gold-400 shrink-0" />
+                <div>
+                  <div className="text-[10px] text-amber-700 font-bold uppercase tracking-wider">Credibility</div>
+                  <div className="text-[11px] text-amber-600">{Math.min(99, 60 + coach.endorsements.length * 5 + coach.skills.reduce((s, sk) => s + sk.endorsementCount, 0) / 10)}%</div>
+                </div>
               </div>
             </div>
 

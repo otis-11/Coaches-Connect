@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useToast } from "@/components/Toast";
 import { useAuth } from "@/lib/AuthContext";
 import {
   Users,
@@ -153,12 +154,18 @@ const suggestedConnections = [
 
 export default function NetworkPage() {
   const { user, profile } = useAuth();
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<"connections" | "tree" | "suggested">("connections");
   const [searchQuery, setSearchQuery] = useState("");
+  const [removedIds, setRemovedIds] = useState<string[]>([]);
+  const [introRequested, setIntroRequested] = useState<Record<string, boolean>>({});
+  const [directConnected, setDirectConnected] = useState<Record<string, boolean>>({});
 
   const filteredConnections = myConnections.filter(
-    (c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-           c.institution.toLowerCase().includes(searchQuery.toLowerCase())
+    (c) => !removedIds.includes(c.id) && (
+      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.institution.toLowerCase().includes(searchQuery.toLowerCase())
+    )
   );
 
   return (
@@ -249,7 +256,10 @@ export default function NetworkPage() {
                     <Link href={`/messages`} className="px-3 py-1.5 text-[11px] font-semibold border border-teal-200 text-teal-600 rounded-lg hover:bg-teal-50 transition-all">
                       Message
                     </Link>
-                    <button className="px-3 py-1.5 text-[11px] font-semibold border border-slate-200 text-slate-500 rounded-lg hover:bg-slate-50 transition-all">
+                    <button
+                      onClick={() => { setRemovedIds((p) => [...p, conn.id]); showToast(`Removed ${conn.name} from connections`); }}
+                      className="px-3 py-1.5 text-[11px] font-semibold border border-slate-200 text-slate-500 rounded-lg hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all"
+                    >
                       Remove
                     </button>
                   </div>
@@ -309,8 +319,15 @@ export default function NetworkPage() {
                             <div className="text-[10px] text-slate-500">{tc.title}</div>
                           </div>
                           <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded">{tc.degree}</span>
-                          <button className="px-2.5 py-1 text-[10px] font-semibold border border-teal-200 text-teal-600 rounded-md hover:bg-teal-50 transition-all opacity-0 group-hover:opacity-100">
-                            Get Intro
+                          <button
+                            onClick={() => { setIntroRequested((p) => ({ ...p, [tc.initials]: true })); showToast(`Intro request sent via ${branch.connection.name}`); }}
+                            className={`px-2.5 py-1 text-[10px] font-semibold rounded-md transition-all opacity-0 group-hover:opacity-100 ${
+                              introRequested[tc.initials]
+                                ? "bg-teal-50 text-teal-600 border border-teal-200"
+                                : "border border-teal-200 text-teal-600 hover:bg-teal-50"
+                            }`}
+                          >
+                            {introRequested[tc.initials] ? "Requested ✓" : "Get Intro"}
                           </button>
                         </div>
                       ))}
@@ -375,11 +392,27 @@ export default function NetworkPage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5 shrink-0">
-                    <button className="flex items-center gap-1 px-3 py-1.5 text-[11px] font-semibold bg-teal-500 text-white rounded-lg hover:bg-teal-400 transition-all">
-                      <UserPlus className="w-3 h-3" /> Request Intro
+                    <button
+                      onClick={() => { setIntroRequested((p) => ({ ...p, [sc.id]: true })); showToast(`Warm intro request sent for ${sc.name}`); }}
+                      disabled={introRequested[sc.id]}
+                      className={`flex items-center gap-1 px-3 py-1.5 text-[11px] font-semibold rounded-lg transition-all ${
+                        introRequested[sc.id]
+                          ? "bg-teal-50 text-teal-600 border border-teal-200"
+                          : "bg-teal-500 text-white hover:bg-teal-400"
+                      }`}
+                    >
+                      <UserPlus className="w-3 h-3" /> {introRequested[sc.id] ? "Requested ✓" : "Request Intro"}
                     </button>
-                    <button className="px-3 py-1.5 text-[11px] font-semibold border border-slate-200 text-slate-500 rounded-lg hover:bg-slate-50 transition-all">
-                      Connect Direct
+                    <button
+                      onClick={() => { setDirectConnected((p) => ({ ...p, [sc.id]: true })); showToast(`Connection request sent to ${sc.name}`); }}
+                      disabled={directConnected[sc.id]}
+                      className={`px-3 py-1.5 text-[11px] font-semibold rounded-lg transition-all ${
+                        directConnected[sc.id]
+                          ? "bg-slate-50 text-slate-400 border border-slate-200"
+                          : "border border-slate-200 text-slate-500 hover:bg-slate-50"
+                      }`}
+                    >
+                      {directConnected[sc.id] ? "Pending" : "Connect Direct"}
                     </button>
                   </div>
                 </div>

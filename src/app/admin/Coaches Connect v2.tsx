@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useToast } from "@/components/Toast";
 import { useAuth } from "@/lib/AuthContext";
 import {
   Shield,
@@ -48,57 +47,14 @@ const recentReports = [
   { id: "r3", type: "Inappropriate", reporter: "Devon Jackson", content: "Offensive comment on post", status: "resolved", time: "1d ago" },
 ];
 
-const flaggedPosts = [
-  { id: "fp1", author: "Unknown User", content: "Buy coaching playbooks at coachdeals.com — 50% off!", reason: "Spam / Promotional", flaggedBy: "System AutoMod", time: "1h ago" },
-  { id: "fp2", author: "Jake Morris", content: "This coach doesn't know what he's talking about. Total fraud.", reason: "Harassment", flaggedBy: "Devon Jackson", time: "3h ago" },
-  { id: "fp3", author: "Anonymous", content: "DM me for insider recruiting info — guaranteed results.", reason: "Suspicious Activity", flaggedBy: "System AutoMod", time: "6h ago" },
-  { id: "fp4", author: "Test Account", content: "test test test test", reason: "Low Quality / Spam", flaggedBy: "Marcus Williams", time: "8h ago" },
-];
-
-const managedOpportunities = [
-  { id: "mo1", title: "Quarterbacks Coach", institution: "Sam Houston State", status: "active", applications: 14, source: "CoachConnect", posted: "2 days ago" },
-  { id: "mo2", title: "Defensive Line Coach", institution: "Jacksonville State", status: "active", applications: 8, source: "Football Scoop", posted: "4 hours ago" },
-  { id: "mo3", title: "Women's Basketball GA", institution: "Clemson University", status: "active", applications: 22, source: "NCAA", posted: "6 hours ago" },
-  { id: "mo4", title: "Head Men's Basketball", institution: "Lincoln University", status: "expiring", applications: 31, source: "Hoop Dirt", posted: "1 day ago" },
-  { id: "mo5", title: "Wide Receivers Coach", institution: "Coastal Carolina", status: "active", applications: 5, source: "D1Ticker", posted: "3 hours ago" },
-  { id: "mo6", title: "Offensive Coordinator", institution: "Lenoir-Rhyne", status: "expired", applications: 19, source: "CoachConnect", posted: "2 weeks ago" },
-];
-
 export default function AdminPage() {
   const { profile } = useAuth();
-  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "content" | "opportunities" | "reports">("overview");
   const [searchQuery, setSearchQuery] = useState("");
-  const [users, setUsers] = useState(mockUsers);
-  const [reports, setReports] = useState(recentReports);
-  const [flagged, setFlagged] = useState(flaggedPosts);
-  const [opps, setOpps] = useState(managedOpportunities);
-  const [expandedUser, setExpandedUser] = useState<string | null>(null);
 
-  const filteredUsers = users.filter(
+  const filteredUsers = mockUsers.filter(
     (u) => u.name.toLowerCase().includes(searchQuery.toLowerCase()) || u.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const handleVerify = (userId: string) => {
-    setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, verified: true, status: "active" } : u));
-    showToast("User verified successfully");
-  };
-
-  const handleDeleteUser = (userId: string) => {
-    const userName = users.find((u) => u.id === userId)?.name;
-    setUsers((prev) => prev.filter((u) => u.id !== userId));
-    showToast(`${userName} has been removed`);
-  };
-
-  const handleResolve = (reportId: string) => {
-    setReports((prev) => prev.map((r) => r.id === reportId ? { ...r, status: "resolved" } : r));
-    showToast("Report resolved");
-  };
-
-  const handleRemoveContent = (reportId: string) => {
-    setReports((prev) => prev.filter((r) => r.id !== reportId));
-    showToast("Content removed");
-  };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -188,7 +144,7 @@ export default function AdminPage() {
               <div className="bg-white rounded-2xl border border-slate-200/80 p-5">
                 <h3 className="font-display font-bold text-sm text-navy-900 mb-4">Reports</h3>
                 <div className="space-y-3">
-                  {reports.map((report) => (
+                  {recentReports.map((report) => (
                     <div key={report.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-xs font-semibold text-navy-900">{report.type}</span>
@@ -239,8 +195,7 @@ export default function AdminPage() {
                 </thead>
                 <tbody>
                   {filteredUsers.map((user) => (
-                    <React.Fragment key={user.id}>
-                    <tr className="border-t border-slate-50 hover:bg-slate-50/50">
+                    <tr key={user.id} className="border-t border-slate-50 hover:bg-slate-50/50">
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-navy-900 to-navy-700 flex items-center justify-center text-white font-display font-bold text-[10px]">
@@ -270,33 +225,20 @@ export default function AdminPage() {
                       <td className="px-5 py-3 text-xs text-slate-500">{user.joined}</td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-1">
-                          <button onClick={() => setExpandedUser(expandedUser === user.id ? null : user.id)} className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors" title="View">
+                          <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors" title="View">
                             <Eye className="w-3.5 h-3.5 text-slate-500" />
                           </button>
                           {!user.verified && (
-                            <button onClick={() => handleVerify(user.id)} className="p-1.5 rounded-lg hover:bg-green-50 transition-colors" title="Verify">
+                            <button className="p-1.5 rounded-lg hover:bg-green-50 transition-colors" title="Verify">
                               <CheckCircle className="w-3.5 h-3.5 text-green-500" />
                             </button>
                           )}
-                          <button onClick={() => handleDeleteUser(user.id)} className="p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="Delete">
+                          <button className="p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="Delete">
                             <Trash2 className="w-3.5 h-3.5 text-red-400" />
                           </button>
                         </div>
                       </td>
                     </tr>
-                    {expandedUser === user.id && (
-                      <tr className="bg-slate-50/50">
-                        <td colSpan={6} className="px-5 py-4">
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-                            <div><span className="text-slate-400">Role:</span> <span className="font-semibold text-navy-900">{user.role}</span></div>
-                            <div><span className="text-slate-400">Sport:</span> <span className="font-semibold text-navy-900">{user.sport}</span></div>
-                            <div><span className="text-slate-400">Joined:</span> <span className="font-semibold text-navy-900">{user.joined}</span></div>
-                            <div><span className="text-slate-400">Status:</span> <span className="font-semibold text-navy-900 capitalize">{user.status}</span></div>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
@@ -306,117 +248,49 @@ export default function AdminPage() {
 
         {/* Content Tab */}
         {activeTab === "content" && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-3 gap-4 max-w-lg">
-              <div className="bg-white rounded-2xl border border-slate-200/80 p-4">
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-8 text-center">
+            <FileText className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+            <h3 className="font-display font-bold text-lg text-navy-900 mb-2">Content Moderation</h3>
+            <p className="text-sm text-slate-500 max-w-md mx-auto">
+              Review and moderate posts, comments, and profile content. Flag inappropriate content and manage community guidelines.
+            </p>
+            <div className="mt-6 grid grid-cols-3 gap-4 max-w-lg mx-auto">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
                 <div className="font-mono text-lg font-bold text-navy-900">3,891</div>
                 <div className="text-[11px] text-slate-500">Total Posts</div>
               </div>
-              <div className="bg-white rounded-2xl border border-yellow-200 p-4">
-                <div className="font-mono text-lg font-bold text-yellow-600">{flagged.length}</div>
+              <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-100">
+                <div className="font-mono text-lg font-bold text-yellow-600">7</div>
                 <div className="text-[11px] text-yellow-600">Flagged</div>
               </div>
-              <div className="bg-white rounded-2xl border border-red-200 p-4">
+              <div className="p-4 rounded-xl bg-red-50 border border-red-100">
                 <div className="font-mono text-lg font-bold text-red-500">2</div>
                 <div className="text-[11px] text-red-500">Removed</div>
               </div>
-            </div>
-            <div className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden">
-              <div className="px-5 py-3 border-b border-slate-100">
-                <h3 className="font-display font-bold text-sm text-navy-900">Flagged Content</h3>
-              </div>
-              {flagged.length > 0 ? flagged.map((post) => (
-                <div key={post.id} className="px-5 py-4 border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-semibold text-navy-900">{post.author}</span>
-                        <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-yellow-50 text-yellow-600 border border-yellow-200">{post.reason}</span>
-                      </div>
-                      <p className="text-sm text-slate-600 italic">&ldquo;{post.content}&rdquo;</p>
-                      <div className="text-[10px] text-slate-400 mt-1">Flagged by {post.flaggedBy} · {post.time}</div>
-                    </div>
-                    <div className="flex gap-1.5 shrink-0">
-                      <button onClick={() => { setFlagged((p) => p.filter((f) => f.id !== post.id)); showToast("Content approved — flag removed"); }} className="px-3 py-1.5 text-[11px] font-semibold bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-all">Approve</button>
-                      <button onClick={() => { setFlagged((p) => p.filter((f) => f.id !== post.id)); showToast("Content removed"); }} className="px-3 py-1.5 text-[11px] font-semibold bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-all">Remove</button>
-                    </div>
-                  </div>
-                </div>
-              )) : (
-                <div className="p-8 text-center">
-                  <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                  <div className="text-sm text-slate-500">No flagged content. All clear!</div>
-                </div>
-              )}
             </div>
           </div>
         )}
 
         {/* Opportunities Tab */}
         {activeTab === "opportunities" && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-3 gap-4 max-w-lg">
-              <div className="bg-white rounded-2xl border border-slate-200/80 p-4">
-                <div className="font-mono text-lg font-bold text-navy-900">{opps.filter((o) => o.status === "active").length}</div>
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-8 text-center">
+            <Briefcase className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+            <h3 className="font-display font-bold text-lg text-navy-900 mb-2">Manage Opportunities</h3>
+            <p className="text-sm text-slate-500 max-w-md mx-auto">
+              Review posted opportunities, manage external feed integrations (Hoop Dirt, Football Scoop), and handle expired listings.
+            </p>
+            <div className="mt-6 grid grid-cols-3 gap-4 max-w-lg mx-auto">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <div className="font-mono text-lg font-bold text-navy-900">67</div>
                 <div className="text-[11px] text-slate-500">Active</div>
               </div>
-              <div className="bg-white rounded-2xl border border-yellow-200 p-4">
-                <div className="font-mono text-lg font-bold text-yellow-600">{opps.filter((o) => o.status === "expiring").length}</div>
-                <div className="text-[11px] text-yellow-600">Expiring Soon</div>
+              <div className="p-4 rounded-xl bg-blue-50 border border-blue-100">
+                <div className="font-mono text-lg font-bold text-blue-600">23</div>
+                <div className="text-[11px] text-blue-600">External Feeds</div>
               </div>
-              <div className="bg-white rounded-2xl border border-slate-200/80 p-4">
-                <div className="font-mono text-lg font-bold text-slate-400">{opps.filter((o) => o.status === "expired").length}</div>
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <div className="font-mono text-lg font-bold text-slate-400">12</div>
                 <div className="text-[11px] text-slate-500">Expired</div>
-              </div>
-            </div>
-            <div className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-slate-50">
-                      <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Position</th>
-                      <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Source</th>
-                      <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                      <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Apps</th>
-                      <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Posted</th>
-                      <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {opps.map((opp) => (
-                      <tr key={opp.id} className="border-t border-slate-50 hover:bg-slate-50/50">
-                        <td className="px-5 py-3">
-                          <div className="text-xs font-semibold text-navy-900">{opp.title}</div>
-                          <div className="text-[11px] text-slate-500">{opp.institution}</div>
-                        </td>
-                        <td className="px-5 py-3">
-                          <span className={`px-2 py-0.5 text-[10px] font-bold rounded ${
-                            opp.source === "CoachConnect" ? "bg-teal-50 text-teal-600" : "bg-blue-50 text-blue-600"
-                          }`}>{opp.source}</span>
-                        </td>
-                        <td className="px-5 py-3">
-                          <span className={`px-2 py-0.5 text-[10px] font-bold rounded ${
-                            opp.status === "active" ? "bg-green-50 text-green-600"
-                              : opp.status === "expiring" ? "bg-yellow-50 text-yellow-600"
-                              : "bg-slate-100 text-slate-400"
-                          }`}>{opp.status}</span>
-                        </td>
-                        <td className="px-5 py-3 text-xs font-mono text-navy-900">{opp.applications}</td>
-                        <td className="px-5 py-3 text-xs text-slate-500">{opp.posted}</td>
-                        <td className="px-5 py-3">
-                          <div className="flex items-center gap-1">
-                            {opp.status === "expired" ? (
-                              <button onClick={() => { setOpps((p) => p.map((o) => o.id === opp.id ? { ...o, status: "active" } : o)); showToast("Listing reactivated"); }} className="px-2.5 py-1 text-[10px] font-semibold bg-teal-50 text-teal-600 rounded-md hover:bg-teal-100 transition-all">Reactivate</button>
-                            ) : (
-                              <button onClick={() => { setOpps((p) => p.map((o) => o.id === opp.id ? { ...o, status: "expired" } : o)); showToast("Listing deactivated"); }} className="px-2.5 py-1 text-[10px] font-semibold bg-slate-50 text-slate-500 rounded-md hover:bg-slate-100 transition-all">Deactivate</button>
-                            )}
-                            <button onClick={() => { setOpps((p) => p.filter((o) => o.id !== opp.id)); showToast("Listing removed"); }} className="px-2.5 py-1 text-[10px] font-semibold bg-red-50 text-red-500 rounded-md hover:bg-red-100 transition-all">Remove</button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </div>
             </div>
           </div>
@@ -444,12 +318,10 @@ export default function AdminPage() {
                     <div className="text-xs text-slate-400 mt-1">Reported by {report.reporter} · {report.time}</div>
                   </div>
                   <div className="flex gap-2 shrink-0">
-                    {report.status !== "resolved" && (
-                      <button onClick={() => handleResolve(report.id)} className="px-3 py-1.5 text-xs font-semibold bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-all">
-                        Resolve
-                      </button>
-                    )}
-                    <button onClick={() => handleRemoveContent(report.id)} className="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-all">
+                    <button className="px-3 py-1.5 text-xs font-semibold bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-all">
+                      Resolve
+                    </button>
+                    <button className="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-all">
                       Remove Content
                     </button>
                   </div>

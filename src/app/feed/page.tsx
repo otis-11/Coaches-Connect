@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useToast } from "@/components/Toast";
 import { useAuth } from "@/lib/AuthContext";
 import { supabase } from "@/lib/supabase";
 import {
@@ -18,6 +19,9 @@ import {
   Filter,
   ChevronDown,
   X,
+  Repeat2,
+  UserPlus,
+  UserCheck,
 } from "lucide-react";
 
 interface Post {
@@ -61,6 +65,28 @@ const postTypes = [
 ];
 
 // Mock feed data for demo (used when no Supabase posts exist yet)
+const mockComments: Record<string, { id: string; author: string; initials: string; title: string; content: string; timeAgo: string }[]> = {
+  "mock-1": [
+    { id: "c1", author: "Devon Jackson", initials: "DJ", title: "DB Coach, Tennessee State", content: "This is amazing! Would love to attend. Is there a limit on spots?", timeAgo: "2h ago" },
+    { id: "c2", author: "Marcus Williams", initials: "MW", title: "OC, Central State", content: "Howard always puts on a great clinic. Highly recommend for young coaches.", timeAgo: "1h ago" },
+  ],
+  "mock-2": [
+    { id: "c3", author: "Sarah Chen", initials: "SC", title: "Head Coach, Pacific Lutheran", content: "This applies to basketball too. Simplicity in your sets builds confidence.", timeAgo: "5h ago" },
+    { id: "c4", author: "Antonio Reyes", initials: "AR", title: "Assistant Coach, UT Arlington", content: "Coach Thompson's influence runs deep. Great insight.", timeAgo: "4h ago" },
+    { id: "c5", author: "Tyler Brooks", initials: "TB", title: "OL Coach, Grand View", content: "We run the same philosophy with our run game install. Less is more.", timeAgo: "3h ago" },
+  ],
+  "mock-3": [
+    { id: "c6", author: "Michelle Okafor", initials: "MO", title: "Assoc. HC, Howard", content: "That panel was incredible! Glad you made it out.", timeAgo: "20h ago" },
+  ],
+  "mock-4": [
+    { id: "c7", author: "Marcus Williams", initials: "MW", title: "OC, Central State", content: "This is gold. QB eyes tell you everything before the snap.", timeAgo: "1d ago" },
+    { id: "c8", author: "Michelle Okafor", initials: "MO", title: "Assoc. HC, Howard", content: "Same concept applies to reading the point guard in transition defense.", timeAgo: "1d ago" },
+  ],
+  "mock-5": [
+    { id: "c9", author: "Sarah Chen", initials: "SC", title: "Head Coach, Pacific Lutheran", content: "Congratulations! Player development is the real scoreboard.", timeAgo: "2d ago" },
+  ],
+};
+
 const mockFeed: Post[] = [
   {
     id: "mock-1",
@@ -154,6 +180,54 @@ export default function FeedPage() {
   const [filter, setFilter] = useState("all");
   const [expandedComments, setExpandedComments] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
+  const [bookmarked, setBookmarked] = useState<Record<string, boolean>>({});
+  const [reposted, setReposted] = useState<Record<string, boolean>>({});
+  const [following, setFollowing] = useState<Record<string, boolean>>({});
+  const [localComments, setLocalComments] = useState<Record<string, { id: string; author: string; initials: string; title: string; content: string; timeAgo: string }[]>>(mockComments);
+  const { showToast } = useToast();
+
+  const handleShare = (postId: string) => {
+    navigator.clipboard?.writeText(`${window.location.origin}/feed#${postId}`);
+    showToast("Link copied to clipboard");
+  };
+
+  const handleBookmark = (postId: string) => {
+    const was = bookmarked[postId];
+    setBookmarked((prev) => ({ ...prev, [postId]: !was }));
+    showToast(was ? "Removed from saved" : "Post saved");
+  };
+
+  const handleRepost = (postId: string) => {
+    const was = reposted[postId];
+    setReposted((prev) => ({ ...prev, [postId]: !was }));
+    showToast(was ? "Repost removed" : "Reposted to your profile");
+  };
+
+  const handleFollow = (authorName: string) => {
+    const was = following[authorName];
+    setFollowing((prev) => ({ ...prev, [authorName]: !was }));
+    showToast(was ? `Unfollowed ${authorName}` : `Following ${authorName}`);
+  };
+
+  const handleReply = (postId: string) => {
+    if (commentText.trim()) {
+      const newComment = {
+        id: `local-${Date.now()}`,
+        author: profile ? `${profile.first_name} ${profile.last_name}` : "You",
+        initials: profile ? `${profile.first_name[0]}${profile.last_name[0]}` : "Y",
+        title: profile?.title || "Coach",
+        content: commentText.trim(),
+        timeAgo: "just now",
+      };
+      setLocalComments((prev) => ({
+        ...prev,
+        [postId]: [...(prev[postId] || []), newComment],
+      }));
+      setPosts((prev) => prev.map((p) => p.id === postId ? { ...p, comments_count: p.comments_count + 1 } : p));
+      setCommentText("");
+      showToast("Comment posted");
+    }
+  };
 
   // Load posts from Supabase on mount
   useEffect(() => {
@@ -395,11 +469,29 @@ export default function FeedPage() {
                       {post.author?.title}{post.author?.institution ? `, ${post.author.institution}` : ""} · {timeAgo(post.created_at)}
                     </div>
                   </div>
-                  <span className={`shrink-0 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                    postTypes.find((t) => t.value === post.post_type)?.color || "bg-slate-50 text-slate-500"
-                  }`}>
-                    {post.post_type}
-                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                      postTypes.find((t) => t.value === post.post_type)?.color || "bg-slate-50 text-slate-500"
+                    }`}>
+                      {post.post_type}
+                    </span>
+                    {post.author && (() => {
+                      const authorName = `${post.author.first_name} ${post.author.last_name}`;
+                      return (
+                        <button
+                          onClick={() => handleFollow(authorName)}
+                          className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-semibold transition-all ${
+                            following[authorName]
+                              ? "bg-teal-50 text-teal-600 border border-teal-200"
+                              : "border border-slate-200 text-slate-500 hover:border-teal-200 hover:text-teal-600"
+                          }`}
+                        >
+                          {following[authorName] ? <UserCheck className="w-3 h-3" /> : <UserPlus className="w-3 h-3" />}
+                          {following[authorName] ? "Following" : "Follow"}
+                        </button>
+                      );
+                    })()}
+                  </div>
                 </div>
 
                 {/* Content */}
@@ -434,11 +526,25 @@ export default function FeedPage() {
                     <MessageSquare className="w-4 h-4" />
                     <span>{post.comments_count}</span>
                   </button>
-                  <button className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-blue-500 transition-colors">
+                  <button
+                    onClick={() => handleRepost(post.id)}
+                    className={`flex items-center gap-1.5 text-xs transition-colors ${
+                      reposted[post.id] ? "text-green-500" : "text-slate-500 hover:text-green-500"
+                    }`}
+                  >
+                    <Repeat2 className="w-4 h-4" /> {reposted[post.id] ? "Reposted" : "Repost"}
+                  </button>
+                  <button
+                    onClick={() => handleShare(post.id)}
+                    className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-blue-500 transition-colors"
+                  >
                     <Share2 className="w-4 h-4" /> Share
                   </button>
-                  <button className="ml-auto text-slate-400 hover:text-gold-400 transition-colors">
-                    <Bookmark className="w-4 h-4" />
+                  <button
+                    onClick={() => handleBookmark(post.id)}
+                    className={`ml-auto transition-colors ${bookmarked[post.id] ? "text-gold-400" : "text-slate-400 hover:text-gold-400"}`}
+                  >
+                    <Bookmark className={`w-4 h-4 ${bookmarked[post.id] ? "fill-current" : ""}`} />
                   </button>
                 </div>
 
@@ -446,27 +552,43 @@ export default function FeedPage() {
                 {expandedComments === post.id && (
                   <div className="mt-4 pt-3 border-t border-slate-100">
                     <div className="space-y-3 mb-3">
-                      <div className="text-xs text-slate-400 italic">
-                        Comments will appear here from connected coaches.
-                      </div>
+                      {(localComments[post.id] || []).length > 0 ? (
+                        (localComments[post.id] || []).map((comment) => (
+                          <div key={comment.id} className="flex items-start gap-2.5">
+                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-navy-900 to-navy-700 flex items-center justify-center text-white font-display font-bold text-[9px] shrink-0">
+                              {comment.initials}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-semibold text-navy-900">{comment.author}</span>
+                                <span className="text-[10px] text-slate-400">{comment.timeAgo}</span>
+                              </div>
+                              <p className="text-xs text-slate-600 mt-0.5">{comment.content}</p>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-xs text-slate-400 italic">
+                          No comments yet. Be the first to respond.
+                        </div>
+                      )}
                     </div>
-                    {user && (
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={commentText}
-                          onChange={(e) => setCommentText(e.target.value)}
-                          placeholder="Write a comment..."
-                          className="flex-1 text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30"
-                        />
-                        <button
-                          onClick={() => setCommentText("")}
-                          className="px-3 py-2 bg-teal-500 text-white text-xs font-semibold rounded-lg hover:bg-teal-400 transition-all"
-                        >
-                          Reply
-                        </button>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleReply(post.id)}
+                        placeholder="Write a comment..."
+                        className="flex-1 text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+                      />
+                      <button
+                        onClick={() => handleReply(post.id)}
+                        className="px-3 py-2 bg-teal-500 text-white text-xs font-semibold rounded-lg hover:bg-teal-400 transition-all"
+                      >
+                        Reply
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>

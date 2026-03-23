@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useToast } from "@/components/Toast";
 import { useAuth } from "@/lib/AuthContext";
 import { coaches } from "@/data/coaches";
 import {
@@ -30,6 +31,7 @@ const fallbackCoach = coaches[0];
 
 export default function ProfilePage() {
   const { user, profile } = useAuth();
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<"overview" | "experience" | "endorsements" | "tree">("overview");
 
   const displayName = profile ? `${profile.first_name} ${profile.last_name}` : `${fallbackCoach.firstName} ${fallbackCoach.lastName}`;
@@ -83,6 +85,12 @@ export default function ProfilePage() {
                 <Link href={`/coach/${fallbackCoach.id}`} className="flex items-center gap-2 px-4 py-2 bg-teal-500 text-white rounded-xl text-sm font-semibold hover:bg-teal-400 transition-all">
                   <Eye className="w-4 h-4" /> Public View
                 </Link>
+                <button
+                  onClick={() => { navigator.clipboard?.writeText(`${window.location.origin}/coach/${fallbackCoach.id}`); showToast("Profile link copied to clipboard"); }}
+                  className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all"
+                >
+                  Share
+                </button>
               </div>
             </div>
 

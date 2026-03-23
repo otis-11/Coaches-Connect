@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useToast } from "@/components/Toast";
 import { useAuth } from "@/lib/AuthContext";
 import {
   Search,
@@ -96,6 +97,7 @@ export default function MessagesPage() {
   const { user, profile } = useAuth();
   const [selectedConv, setSelectedConv] = useState<string | null>("conv-1");
   const [messageInput, setMessageInput] = useState("");
+  const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [localMessages, setLocalMessages] = useState(mockMessages);
 
@@ -228,13 +230,13 @@ export default function MessagesPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                    <button onClick={() => showToast("Voice calling coming soon", "info")} className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
                       <Phone className="w-4 h-4 text-slate-500" />
                     </button>
-                    <button className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                    <button onClick={() => showToast("Video calling coming soon", "info")} className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
                       <Video className="w-4 h-4 text-slate-500" />
                     </button>
-                    <button className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                    <button onClick={() => showToast("More options coming soon", "info")} className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
                       <MoreHorizontal className="w-4 h-4 text-slate-500" />
                     </button>
                   </div>
@@ -277,7 +279,7 @@ export default function MessagesPage() {
                 {/* Input */}
                 <div className="px-5 py-3 border-t border-slate-100">
                   <div className="flex items-center gap-2">
-                    <button className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                    <button onClick={() => showToast("File attachments coming soon", "info")} className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
                       <Paperclip className="w-4 h-4 text-slate-500" />
                     </button>
                     <input
@@ -288,7 +290,7 @@ export default function MessagesPage() {
                       placeholder="Type a message..."
                       className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30"
                     />
-                    <button className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                    <button onClick={() => showToast("Emoji picker coming soon", "info")} className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
                       <Smile className="w-4 h-4 text-slate-500" />
                     </button>
                     <button
