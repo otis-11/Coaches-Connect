@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { useAuth } from "@/lib/AuthContext";
-import { supabase } from "@/lib/supabase";
 import {
   Shield,
   Users,
@@ -60,17 +60,22 @@ export default function AdminPage() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-purple-600" />
-          </div>
-          <div>
-            <h1 className="font-display text-2xl font-bold text-navy-900">Admin Panel</h1>
-            <p className="text-sm text-slate-500">Manage users, content, and platform settings</p>
+      {/* Header */}
+      <div className="bg-navy-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="flex items-center gap-4 mb-3">
+            <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
+              <Shield className="w-6 h-6 text-purple-300" />
+            </div>
+            <div>
+              <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight">Admin Panel</h1>
+              <p className="text-slate-300 text-lg mt-1">Manage users, content, and platform settings</p>
+            </div>
           </div>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Tabs */}
         <div className="flex gap-1 mb-6 bg-white rounded-xl border border-slate-200 p-1 overflow-x-auto">
@@ -326,6 +331,8 @@ export default function AdminPage() {
           </div>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }

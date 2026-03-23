@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { useAuth } from "@/lib/AuthContext";
 import {
   Search,
@@ -129,8 +130,20 @@ export default function MessagesPage() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <Navbar />
 
+      {/* Header */}
+      <div className="bg-navy-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight mb-3">
+            Messages
+          </h1>
+          <p className="text-slate-300 text-lg max-w-2xl">
+            Connect and collaborate with coaches in your network.
+          </p>
+        </div>
+      </div>
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden" style={{ height: "calc(100vh - 130px)" }}>
+        <div className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden" style={{ height: "70vh" }}>
           <div className="flex h-full">
             {/* Conversations List */}
             <div className={`w-full sm:w-80 lg:w-96 border-r border-slate-200/80 flex flex-col ${selectedConv ? "hidden sm:flex" : "flex"}`}>
@@ -302,6 +315,8 @@ export default function MessagesPage() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

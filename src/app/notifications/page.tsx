@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { useAuth } from "@/lib/AuthContext";
 import {
   Bell,
@@ -51,18 +52,24 @@ export default function NotificationsPage() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <Navbar />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="font-display text-2xl font-bold text-navy-900">Notifications</h1>
-            <p className="text-sm text-slate-500 mt-0.5">{unreadCount} unread</p>
+      {/* Header */}
+      <div className="bg-navy-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight mb-3">Notifications</h1>
+              <p className="text-slate-300 text-lg">{unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}</p>
+            </div>
+            {unreadCount > 0 && (
+              <button onClick={markAllRead} className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white border border-white/20 rounded-lg hover:bg-white/10 transition-all">
+                <Check className="w-4 h-4" /> Mark all read
+              </button>
+            )}
           </div>
-          {unreadCount > 0 && (
-            <button onClick={markAllRead} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-teal-600 border border-teal-200 rounded-lg hover:bg-teal-50 transition-all">
-              <Check className="w-3.5 h-3.5" /> Mark all read
-            </button>
-          )}
         </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Filter */}
         <div className="flex gap-1 mb-6 bg-white rounded-xl border border-slate-200 p-1 w-fit">
@@ -122,6 +129,8 @@ export default function NotificationsPage() {
           )}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

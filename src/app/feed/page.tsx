@@ -270,6 +270,18 @@ export default function FeedPage() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <Navbar />
 
+      {/* Header */}
+      <div className="bg-navy-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight mb-3">
+            Your Feed
+          </h1>
+          <p className="text-slate-300 text-lg max-w-2xl">
+            Insights, updates, and conversations from your coaching network.
+          </p>
+        </div>
+      </div>
+
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Compose */}
         {user && (

@@ -45,6 +45,18 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <Navbar />
 
+      {/* Header */}
+      <div className="bg-navy-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight mb-3">
+            My Profile
+          </h1>
+          <p className="text-slate-300 text-lg max-w-2xl">
+            Your professional coaching profile and career history.
+          </p>
+        </div>
+      </div>
+
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Profile Header */}
         <div className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden mb-6">

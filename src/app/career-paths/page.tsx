@@ -82,21 +82,24 @@ export default function CareerPathsPage() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <Navbar />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gold-400/10 rounded-full mb-4">
+      {/* Header */}
+      <div className="bg-navy-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gold-400/20 rounded-full mb-4">
             <GraduationCap className="w-4 h-4 text-gold-400" />
             <span className="text-xs font-bold text-gold-400 uppercase tracking-wider">Career Navigation</span>
           </div>
-          <h1 className="font-display text-3xl font-bold text-navy-900 mb-3">
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight mb-3">
             Coaching Career Paths
           </h1>
-          <p className="text-slate-500 text-sm max-w-xl mx-auto">
+          <p className="text-slate-300 text-lg max-w-2xl">
             Real career maps showing how coaches advance from entry-level roles to head coaching positions.
             Every path is different — these are common progressions based on real coaching careers.
           </p>
         </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Insights */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">

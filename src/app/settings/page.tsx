@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { useAuth } from "@/lib/AuthContext";
 import { supabase } from "@/lib/supabase";
 import {
@@ -67,8 +68,15 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <Navbar />
 
+      {/* Header */}
+      <div className="bg-navy-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight mb-3">Settings</h1>
+          <p className="text-slate-300 text-lg max-w-2xl">Manage your profile, privacy, and account preferences.</p>
+        </div>
+      </div>
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="font-display text-2xl font-bold text-navy-900 mb-6">Settings</h1>
 
         <div className="flex gap-6">
           {/* Sidebar */}
@@ -272,6 +280,8 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
