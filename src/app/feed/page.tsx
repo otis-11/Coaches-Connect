@@ -6,153 +6,116 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/components/Toast";
 import { useAuth } from "@/lib/AuthContext";
+import { filmClips, coaches, type FilmClip } from "@/data/coaches";
 import {
   Heart,
   MessageSquare,
   Share2,
   Bookmark,
-  Image,
   Send,
-  MoreHorizontal,
   TrendingUp,
-  Filter,
-  ChevronDown,
   X,
-  Repeat2,
   UserPlus,
   UserCheck,
+  Play,
+  Film,
+  Eye,
+  Clock,
+  Target,
+  BookOpen,
+  Zap,
+  Clapperboard,
+  Filter,
 } from "lucide-react";
 
-interface Post {
+interface FeedPost {
   id: string;
-  author_id: string;
-  content: string;
-  post_type: string;
-  tags: string[];
-  image_url: string | null;
-  created_at: string;
-  author: {
-    first_name: string;
-    last_name: string;
-    title: string | null;
-    institution: string | null;
-    sport: string | null;
-    avatar_url: string | null;
-  } | null;
-  likes_count: number;
-  comments_count: number;
-  user_liked: boolean;
+  clipId: string;
+  coachId: string;
+  coachName: string;
+  coachInitials: string;
+  coachTitle: string;
+  coachInstitution: string;
+  coachSport: string;
+  caption: string;
+  clip: FilmClip;
+  postedAt: string;
+  likes: number;
+  comments: number;
+  userLiked: boolean;
 }
 
-interface Comment {
-  id: string;
-  content: string;
-  created_at: string;
-  author: {
-    first_name: string;
-    last_name: string;
-    title: string | null;
-  } | null;
-}
+const categoryConfig: Record<FilmClip["category"], { label: string; icon: typeof Play; color: string }> = {
+  play: { label: "Play", icon: Target, color: "bg-teal-50 text-teal-700" },
+  scheme: { label: "Scheme", icon: BookOpen, color: "bg-blue-50 text-blue-700" },
+  drill: { label: "Drill", icon: Zap, color: "bg-amber-50 text-amber-700" },
+  "game-film": { label: "Game Film", icon: Film, color: "bg-red-50 text-red-700" },
+  breakdown: { label: "Breakdown", icon: Clapperboard, color: "bg-purple-50 text-purple-700" },
+};
 
-const postTypes = [
-  { value: "update", label: "Update", color: "bg-blue-50 text-blue-600" },
-  { value: "insight", label: "Insight", color: "bg-teal-50 text-teal-600" },
-  { value: "announcement", label: "Announcement", color: "bg-purple-50 text-purple-600" },
-  { value: "milestone", label: "Milestone", color: "bg-gold-400/10 text-gold-400" },
-  { value: "article", label: "Article", color: "bg-orange-50 text-orange-600" },
-];
-
-// Mock feed data for demo
 const mockComments: Record<string, { id: string; author: string; initials: string; title: string; content: string; timeAgo: string }[]> = {
-  "mock-1": [
-    { id: "c1", author: "Devon Jackson", initials: "DJ", title: "DB Coach, Tennessee State", content: "This is amazing! Would love to attend. Is there a limit on spots?", timeAgo: "2h ago" },
-    { id: "c2", author: "Marcus Williams", initials: "MW", title: "OC, Central State", content: "Howard always puts on a great clinic. Highly recommend for young coaches.", timeAgo: "1h ago" },
+  "fp-1": [
+    { id: "c1", author: "Devon Jackson", initials: "DJ", title: "DB Coach, Tennessee State", content: "That glance route is money. We see a lot of Cover 3 in our conference too — going to rep this.", timeAgo: "2h ago" },
+    { id: "c2", author: "Tyler Brooks", initials: "TB", title: "OL Coach, Grand View", content: "What's the protection look like on this? Slide or BOB?", timeAgo: "1h ago" },
   ],
-  "mock-2": [
-    { id: "c3", author: "Sarah Chen", initials: "SC", title: "Head Coach, Pacific Lutheran", content: "This applies to basketball too. Simplicity in your sets builds confidence.", timeAgo: "5h ago" },
-    { id: "c4", author: "Antonio Reyes", initials: "AR", title: "Assistant Coach, UT Arlington", content: "Coach Thompson's influence runs deep. Great insight.", timeAgo: "4h ago" },
-    { id: "c5", author: "Tyler Brooks", initials: "TB", title: "OL Coach, Grand View", content: "We run the same philosophy with our run game install. Less is more.", timeAgo: "3h ago" },
+  "fp-2": [
+    { id: "c3", author: "Michelle Okafor", initials: "MO", title: "Assoc. HC, Howard", content: "This is exactly what we needed for our press break. The spacing is perfect.", timeAgo: "4h ago" },
+    { id: "c4", author: "Antonio Reyes", initials: "AR", title: "Player Dev, RGV Vipers", content: "Same reads we teach in our PnR offense. Great teaching tape.", timeAgo: "3h ago" },
   ],
-  "mock-3": [
-    { id: "c6", author: "Michelle Okafor", initials: "MO", title: "Assoc. HC, Howard", content: "That panel was incredible! Glad you made it out.", timeAgo: "20h ago" },
+  "fp-3": [
+    { id: "c5", author: "Marcus Williams", initials: "MW", title: "OC, Central State", content: "Coach, this reroute technique is elite. Can you share the individual drill progression?", timeAgo: "6h ago" },
   ],
-  "mock-4": [
-    { id: "c7", author: "Marcus Williams", initials: "MW", title: "OC, Central State", content: "This is gold. QB eyes tell you everything before the snap.", timeAgo: "1d ago" },
-    { id: "c8", author: "Michelle Okafor", initials: "MO", title: "Assoc. HC, Howard", content: "Same concept applies to reading the point guard in transition defense.", timeAgo: "1d ago" },
+  "fp-4": [
+    { id: "c6", author: "Sarah Chen", initials: "SC", title: "Head Coach, Pacific Lutheran", content: "Pack-line principles translate everywhere. Love seeing this broken down step by step.", timeAgo: "1d ago" },
+    { id: "c7", author: "Devon Jackson", initials: "DJ", title: "DB Coach, Tennessee State", content: "The help-side rotation here is textbook. Saving this for our film session.", timeAgo: "20h ago" },
   ],
-  "mock-5": [
-    { id: "c9", author: "Sarah Chen", initials: "SC", title: "Head Coach, Pacific Lutheran", content: "Congratulations! Player development is the real scoreboard.", timeAgo: "2d ago" },
+  "fp-5": [
+    { id: "c8", author: "Sarah Chen", initials: "SC", title: "Head Coach, Pacific Lutheran", content: "Pick-and-roll reads are the foundation. This is excellent player dev content.", timeAgo: "2d ago" },
+  ],
+  "fp-6": [
+    { id: "c9", author: "Antonio Reyes", initials: "AR", title: "Player Dev, RGV Vipers", content: "Converting athletes is an underrated skill. This is how programs are built.", timeAgo: "1d ago" },
   ],
 };
 
-const mockFeed: Post[] = [
-  {
-    id: "mock-1",
-    author_id: "mock",
-    content: "Thrilled to announce that Howard women's basketball will be hosting our annual coaching clinic this summer! Great opportunity for aspiring coaches to learn from some of the best minds in the MEAC. Registration opens next week.",
-    post_type: "announcement",
-    tags: ["clinic", "MEAC", "womensbasketball"],
-    image_url: null,
-    created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-    author: { first_name: "Michelle", last_name: "Okafor", title: "Associate Head Coach", institution: "Howard University", sport: "basketball", avatar_url: null },
-    likes_count: 47,
-    comments_count: 12,
-    user_liked: false,
-  },
-  {
-    id: "mock-2",
-    author_id: "mock",
-    content: "One thing I learned early from Coach Thompson: the best play callers aren't the ones with the most plays — they're the ones who know which 15 plays to call in the right moment. Simplicity creates confidence. Confidence creates execution.",
-    post_type: "insight",
-    tags: ["playcalling", "coaching", "football"],
-    image_url: null,
-    created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-    author: { first_name: "Marcus", last_name: "Williams", title: "OC / QB Coach", institution: "Central State University", sport: "football", avatar_url: null },
-    likes_count: 89,
-    comments_count: 23,
-    user_liked: true,
-  },
-  {
-    id: "mock-3",
-    author_id: "mock",
-    content: "Just returned from the WBCA Convention — so many incredible sessions on building defensive culture. The panel on pack-line defense adaptations for smaller rosters was exactly what I needed. Grateful for this coaching community.",
-    post_type: "update",
-    tags: ["WBCA", "defense", "basketball"],
-    image_url: null,
-    created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-    author: { first_name: "Sarah", last_name: "Chen", title: "Head Coach", institution: "Pacific Lutheran University", sport: "basketball", avatar_url: null },
-    likes_count: 62,
-    comments_count: 8,
-    user_liked: false,
-  },
-  {
-    id: "mock-4",
-    author_id: "mock",
-    content: "Film study tip for young DB coaches: don't just watch the receiver — watch the QB's eyes and shoulders. Teach your guys to read the same pre-snap cues the QB is reading. It changes everything about how they play the ball.",
-    post_type: "insight",
-    tags: ["filmStudy", "DBcoach", "football"],
-    image_url: null,
-    created_at: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
-    author: { first_name: "Devon", last_name: "Jackson", title: "DB Coach", institution: "Tennessee State University", sport: "football", avatar_url: null },
-    likes_count: 134,
-    comments_count: 31,
-    user_liked: false,
-  },
-  {
-    id: "mock-5",
-    author_id: "mock",
-    content: "Excited to share that three of our players from the 2023 class have earned All-Conference honors this season. Player development is a process, not an event. Proud of these young men and the work they've put in.",
-    post_type: "milestone",
-    tags: ["playerDevelopment", "AllConference", "proud"],
-    image_url: null,
-    created_at: new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString(),
-    author: { first_name: "Antonio", last_name: "Reyes", title: "Assistant Coach", institution: "UT Arlington", sport: "basketball", avatar_url: null },
-    likes_count: 201,
-    comments_count: 42,
-    user_liked: true,
-  },
-];
+// Build feed from film clips — coaches sharing their best plays
+function buildFilmFeed(): FeedPost[] {
+  const captions: Record<string, string> = {
+    "clip-1": "Our bread-and-butter RPO that accounted for 14 TDs this season. If you're seeing a lot of Cover 3, this glance concept is a cheat code. Film breakdown + play call included. 🎯",
+    "clip-7": "Here's our primary half-court action from the NWC Tournament run. 5-out to ball screen with 3 reads. Created layup-line looks against every switching defense we saw. 1.12 PPP. 🏀",
+    "clip-8": "Teaching our DBs to pattern-match in Cover 3. This is the reroute-and-rally technique that got us 3 INTs this season. Full film from TSU vs. SEMO. 🎬",
+    "clip-6": "Full teaching progression for our pack-line defense. This is how we held opponents to 38% FG in conference play. Help-side rotation and closeout technique breakdown. 🛡️",
+    "clip-10": "Breaking down ball-handler reads in our primary pick-and-roll. When to turn the corner, when to hit the roller, when to skip. This is how we got top 5 PnR efficiency in the G-League. 📊",
+    "clip-12": "Teaching tape for our inside zone double-team. Hip-to-hip landmark, vertical displacement, and when to climb. This is how we develop OL at the NAIA level. 💪",
+    "clip-4": "Full 4th quarter cut-up from our comeback win over Tuskegee. Down 17, we scored 24 unanswered with our tempo package. Every play annotated. This is what we preach — NEXT PLAY mentality. 🔥",
+    "clip-11": "We got pressed out of the gym by Delaware State. So we installed this 1-4 flat press break and broke it 14 straight possessions in the rematch. Adjustments win games. ♟️",
+    "clip-5": "Whiteboard + film breakdown of how we attack Cover 2. Four-verticals, smash, and the sail route that gave us 3 TDs in the SIAC championship. Coaches, steal this. 📋",
+    "clip-9": "Spring ball drill tape — press-bail technique, off-man footwork, and transition. This is the progression that developed two all-conference corners. Individual work matters. 🏋️",
+  };
+
+  const clipOrder = ["clip-1", "clip-7", "clip-8", "clip-6", "clip-10", "clip-12", "clip-4", "clip-11", "clip-5", "clip-9"];
+  const hoursAgo = [2, 5, 8, 14, 26, 34, 48, 72, 96, 120];
+
+  return clipOrder.map((clipId, i) => {
+    const clip = filmClips.find((c) => c.id === clipId)!;
+    const coach = coaches.find((c) => c.id === clip.coachId);
+    return {
+      id: `fp-${i + 1}`,
+      clipId: clip.id,
+      coachId: clip.coachId,
+      coachName: coach ? `${coach.firstName} ${coach.lastName}` : "Coach",
+      coachInitials: coach?.avatarInitials || "??",
+      coachTitle: coach?.title || "",
+      coachInstitution: coach?.institution || "",
+      coachSport: coach?.sport || "football",
+      caption: captions[clipId] || clip.description,
+      clip,
+      postedAt: new Date(Date.now() - hoursAgo[i] * 60 * 60 * 1000).toISOString(),
+      likes: clip.likes + Math.floor(Math.random() * 50),
+      comments: Object.keys(mockComments).includes(`fp-${i + 1}`) ? (mockComments[`fp-${i + 1}`]?.length || 0) : 0,
+      userLiked: i === 1 || i === 4,
+    };
+  });
+}
 
 function timeAgo(dateStr: string): string {
   const now = new Date();
@@ -170,20 +133,25 @@ function timeAgo(dateStr: string): string {
 
 export default function FeedPage() {
   const { user, profile } = useAuth();
-  const [posts, setPosts] = useState<Post[]>(mockFeed);
-  const [newPost, setNewPost] = useState("");
-  const [postType, setPostType] = useState("update");
-  const [tagInput, setTagInput] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
-  const [posting, setPosting] = useState(false);
-  const [filter, setFilter] = useState("all");
+  const { showToast } = useToast();
+  const [posts, setPosts] = useState<FeedPost[]>(buildFilmFeed);
+  const [filter, setFilter] = useState<FilmClip["category"] | "all">("all");
+  const [sportFilter, setSportFilter] = useState<"all" | "football" | "basketball">("all");
   const [expandedComments, setExpandedComments] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
   const [bookmarked, setBookmarked] = useState<Record<string, boolean>>({});
-  const [reposted, setReposted] = useState<Record<string, boolean>>({});
   const [following, setFollowing] = useState<Record<string, boolean>>({});
   const [localComments, setLocalComments] = useState<Record<string, { id: string; author: string; initials: string; title: string; content: string; timeAgo: string }[]>>(mockComments);
-  const { showToast } = useToast();
+
+  const handleLike = (postId: string) => {
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === postId
+          ? { ...p, userLiked: !p.userLiked, likes: p.userLiked ? p.likes - 1 : p.likes + 1 }
+          : p
+      )
+    );
+  };
 
   const handleShare = (postId: string) => {
     navigator.clipboard?.writeText(`${window.location.origin}/feed#${postId}`);
@@ -193,13 +161,7 @@ export default function FeedPage() {
   const handleBookmark = (postId: string) => {
     const was = bookmarked[postId];
     setBookmarked((prev) => ({ ...prev, [postId]: !was }));
-    showToast(was ? "Removed from saved" : "Post saved");
-  };
-
-  const handleRepost = (postId: string) => {
-    const was = reposted[postId];
-    setReposted((prev) => ({ ...prev, [postId]: !was }));
-    showToast(was ? "Repost removed" : "Reposted to your profile");
+    showToast(was ? "Removed from saved" : "Film saved to your collection");
   };
 
   const handleFollow = (authorName: string) => {
@@ -222,70 +184,17 @@ export default function FeedPage() {
         ...prev,
         [postId]: [...(prev[postId] || []), newComment],
       }));
-      setPosts((prev) => prev.map((p) => p.id === postId ? { ...p, comments_count: p.comments_count + 1 } : p));
+      setPosts((prev) => prev.map((p) => p.id === postId ? { ...p, comments: p.comments + 1 } : p));
       setCommentText("");
       showToast("Comment posted");
     }
   };
 
+  const filteredPosts = posts
+    .filter((p) => filter === "all" || p.clip.category === filter)
+    .filter((p) => sportFilter === "all" || p.clip.sport === sportFilter);
 
-  const handlePost = () => {
-    if (!newPost.trim()) return;
-    setPosting(true);
-    const newPostObj: Post = {
-      id: `local-${Date.now()}`,
-      author_id: "local",
-      content: newPost.trim(),
-      post_type: postType,
-      tags,
-      image_url: null,
-      created_at: new Date().toISOString(),
-      author: profile
-        ? { first_name: profile.first_name, last_name: profile.last_name, title: profile.title, institution: profile.institution, sport: profile.sport, avatar_url: profile.avatar_url }
-        : { first_name: "You", last_name: "", title: null, institution: null, sport: null, avatar_url: null },
-      likes_count: 0,
-      comments_count: 0,
-      user_liked: false,
-    };
-    setPosts((prev) => [newPostObj, ...prev]);
-    setNewPost("");
-    setTags([]);
-    setPostType("update");
-    setPosting(false);
-    showToast("Post published");
-  };
-
-  const handleLike = (postId: string) => {
-    setPosts((prev) =>
-      prev.map((p) =>
-        p.id === postId
-          ? { ...p, user_liked: !p.user_liked, likes_count: p.user_liked ? p.likes_count - 1 : p.likes_count + 1 }
-          : p
-      )
-    );
-  };
-
-  const handleMockLike = (postId: string) => {
-    setPosts((prev) =>
-      prev.map((p) =>
-        p.id === postId
-          ? { ...p, user_liked: !p.user_liked, likes_count: p.user_liked ? p.likes_count - 1 : p.likes_count + 1 }
-          : p
-      )
-    );
-  };
-
-  const addTag = () => {
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      setTags([...tags, tagInput.trim()]);
-      setTagInput("");
-    }
-  };
-
-  const initials = (first: string, last: string) =>
-    `${first?.[0] || ""}${last?.[0] || ""}`;
-
-  const filteredPosts = filter === "all" ? posts : posts.filter((p) => p.post_type === filter);
+  const categories = Object.keys(categoryConfig) as FilmClip["category"][];
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -294,260 +203,258 @@ export default function FeedPage() {
       {/* Header */}
       <div className="bg-navy-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-            Your Feed
-          </h1>
+          <div className="flex items-center gap-3 mb-3">
+            <Film className="w-8 h-8 text-teal-400" />
+            <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight">
+              Film Feed
+            </h1>
+          </div>
           <p className="text-slate-300 text-lg max-w-2xl">
-            Insights, updates, and conversations from your coaching network.
+            Coaches sharing their best plays, schemes, and breakdowns. Watch, learn, and connect.
           </p>
         </div>
       </div>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Compose */}
-        {user && (
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 mb-6">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-navy-900 to-navy-700 flex items-center justify-center text-white font-display font-bold text-xs shrink-0">
-                {profile ? initials(profile.first_name, profile.last_name) : "?"}
-              </div>
-              <div className="flex-1">
-                <textarea
-                  value={newPost}
-                  onChange={(e) => setNewPost(e.target.value)}
-                  placeholder="Share an insight, update, or coaching tip..."
-                  rows={3}
-                  className="w-full bg-transparent text-navy-900 placeholder-slate-400 text-sm resize-none focus:outline-none"
-                />
-
-                {/* Tags */}
-                {tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {tags.map((tag) => (
-                      <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-teal-50 text-teal-600 text-xs font-medium">
-                        #{tag}
-                        <button onClick={() => setTags(tags.filter((t) => t !== tag))} className="hover:text-red-500"><X className="w-3 h-3" /></button>
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                  <div className="flex items-center gap-2">
-                    <select
-                      value={postType}
-                      onChange={(e) => setPostType(e.target.value)}
-                      className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/30"
-                    >
-                      {postTypes.map((t) => (
-                        <option key={t.value} value={t.value}>{t.label}</option>
-                      ))}
-                    </select>
-                    <div className="flex items-center gap-1">
-                      <input
-                        type="text"
-                        value={tagInput}
-                        onChange={(e) => setTagInput(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
-                        placeholder="Add tag..."
-                        className="w-24 text-xs px-2 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30"
-                      />
-                    </div>
-                  </div>
+        {/* Filters */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-slate-400" />
+              <span className="text-xs font-semibold text-slate-600">Type:</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                onClick={() => setFilter("all")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  filter === "all" ? "bg-navy-900 text-white" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                All
+              </button>
+              {categories.map((cat) => {
+                const cfg = categoryConfig[cat];
+                return (
                   <button
-                    onClick={handlePost}
-                    disabled={!newPost.trim() || posting}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-teal-500 text-white font-display font-semibold text-xs rounded-lg hover:bg-teal-400 transition-all disabled:opacity-40"
+                    key={cat}
+                    onClick={() => setFilter(cat)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      filter === cat ? "bg-navy-900 text-white" : `bg-white border border-slate-200 text-slate-600 hover:bg-slate-50`
+                    }`}
                   >
-                    <Send className="w-3.5 h-3.5" />
-                    {posting ? "Posting..." : "Post"}
+                    {cfg.label}
                   </button>
-                </div>
-              </div>
+                );
+              })}
+            </div>
+            <div className="sm:ml-auto flex gap-1.5">
+              {(["all", "football", "basketball"] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSportFilter(s)}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    sportFilter === s ? "bg-navy-900 text-white" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  {s === "all" ? "All" : s === "football" ? "🏈" : "🏀"}
+                </button>
+              ))}
             </div>
           </div>
-        )}
-
-        {/* Filter tabs */}
-        <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
-          <button
-            onClick={() => setFilter("all")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-              filter === "all" ? "bg-navy-900 text-white" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-            }`}
-          >
-            All Posts
-          </button>
-          {postTypes.map((t) => (
-            <button
-              key={t.value}
-              onClick={() => setFilter(t.value)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-                filter === t.value ? "bg-navy-900 text-white" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
         </div>
 
-        {/* Posts */}
-        <div className="space-y-4">
-          {filteredPosts.map((post) => (
-            <div key={post.id} className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden hover:shadow-md transition-shadow">
-              <div className="p-5">
-                {/* Header */}
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-navy-900 to-navy-700 flex items-center justify-center text-white font-display font-bold text-xs shrink-0">
-                    {post.author ? initials(post.author.first_name, post.author.last_name) : "?"}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-display font-semibold text-sm text-navy-900">
-                        {post.author ? `${post.author.first_name} ${post.author.last_name}` : "Unknown"}
-                      </span>
-                      {post.author?.sport && (
+        {/* Film Posts */}
+        <div className="space-y-6">
+          {filteredPosts.map((post) => {
+            const cfg = categoryConfig[post.clip.category];
+            const CatIcon = cfg.icon;
+            return (
+              <div key={post.id} className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden hover:shadow-lg transition-shadow">
+                {/* Coach Header */}
+                <div className="p-4 pb-3">
+                  <div className="flex items-start gap-3">
+                    <Link href={`/coach/${post.coachId}`}>
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-navy-900 to-navy-700 flex items-center justify-center text-white font-display font-bold text-xs shrink-0 hover:ring-2 hover:ring-teal-500/50 transition-all">
+                        {post.coachInitials}
+                      </div>
+                    </Link>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Link href={`/coach/${post.coachId}`} className="font-display font-semibold text-sm text-navy-900 hover:text-teal-600 transition-colors">
+                          {post.coachName}
+                        </Link>
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">
-                          {post.author.sport === "football" ? "🏈" : "🏀"}
+                          {post.coachSport === "football" ? "🏈" : "🏀"}
                         </span>
-                      )}
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${cfg.color}`}>
+                          {cfg.label}
+                        </span>
+                      </div>
+                      <div className="text-xs text-slate-500">
+                        {post.coachTitle}, {post.coachInstitution} · {timeAgo(post.postedAt)}
+                      </div>
                     </div>
-                    <div className="text-xs text-slate-500">
-                      {post.author?.title}{post.author?.institution ? `, ${post.author.institution}` : ""} · {timeAgo(post.created_at)}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                      postTypes.find((t) => t.value === post.post_type)?.color || "bg-slate-50 text-slate-500"
-                    }`}>
-                      {post.post_type}
-                    </span>
-                    {post.author && (() => {
-                      const authorName = `${post.author.first_name} ${post.author.last_name}`;
-                      return (
-                        <button
-                          onClick={() => handleFollow(authorName)}
-                          className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-semibold transition-all ${
-                            following[authorName]
-                              ? "bg-teal-50 text-teal-600 border border-teal-200"
-                              : "border border-slate-200 text-slate-500 hover:border-teal-200 hover:text-teal-600"
-                          }`}
-                        >
-                          {following[authorName] ? <UserCheck className="w-3 h-3" /> : <UserPlus className="w-3 h-3" />}
-                          {following[authorName] ? "Following" : "Follow"}
-                        </button>
-                      );
-                    })()}
+                    <button
+                      onClick={() => handleFollow(post.coachName)}
+                      className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all shrink-0 ${
+                        following[post.coachName]
+                          ? "bg-teal-50 text-teal-600 border border-teal-200"
+                          : "border border-slate-200 text-slate-500 hover:border-teal-200 hover:text-teal-600"
+                      }`}
+                    >
+                      {following[post.coachName] ? <UserCheck className="w-3 h-3" /> : <UserPlus className="w-3 h-3" />}
+                      {following[post.coachName] ? "Following" : "Follow"}
+                    </button>
                   </div>
                 </div>
 
-                {/* Content */}
-                <p className="text-slate-700 text-sm leading-relaxed mb-3">{post.content}</p>
+                {/* Caption */}
+                <div className="px-4 pb-3">
+                  <p className="text-slate-700 text-sm leading-relaxed">{post.caption}</p>
+                </div>
+
+                {/* Film Thumbnail */}
+                <div className={`relative h-52 sm:h-64 bg-gradient-to-br ${post.clip.thumbnailColor} flex items-center justify-center cursor-pointer group`}>
+                  <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Play className="w-8 h-8 text-white ml-1" />
+                  </div>
+                  <div className="absolute top-3 left-3 flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-white/90 text-slate-700">
+                      <CatIcon className="w-3 h-3" />
+                      {cfg.label}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-3 right-3 px-2 py-1 rounded-md bg-black/60 text-white text-xs font-mono">
+                    {post.clip.duration}
+                  </div>
+                  <div className="absolute bottom-3 left-3 max-w-[70%]">
+                    <div className="px-2.5 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm">
+                      <div className="font-display font-bold text-white text-sm truncate">{post.clip.title}</div>
+                      {post.clip.formation && (
+                        <div className="text-white/70 text-[10px] mt-0.5">{post.clip.formation}</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Result badge */}
+                {post.clip.result && (
+                  <div className="mx-4 mt-3 p-2.5 rounded-xl bg-teal-50 border border-teal-100">
+                    <div className="flex items-center gap-1.5">
+                      <TrendingUp className="w-3.5 h-3.5 text-teal-600" />
+                      <span className="text-xs font-semibold text-teal-700">Result:</span>
+                      <span className="text-xs text-teal-600">{post.clip.result}</span>
+                    </div>
+                  </div>
+                )}
 
                 {/* Tags */}
-                {post.tags && post.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {post.tags.map((tag) => (
-                      <span key={tag} className="px-2 py-0.5 rounded text-[11px] bg-slate-50 text-slate-500 border border-slate-100">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Actions */}
-                <div className="flex items-center gap-4 pt-3 border-t border-slate-100">
-                  <button
-                    onClick={() => handleLike(post.id)}
-                    className={`flex items-center gap-1.5 text-xs transition-colors ${
-                      post.user_liked ? "text-red-500" : "text-slate-500 hover:text-red-500"
-                    }`}
-                  >
-                    <Heart className={`w-4 h-4 ${post.user_liked ? "fill-current" : ""}`} />
-                    <span>{post.likes_count}</span>
-                  </button>
-                  <button
-                    onClick={() => setExpandedComments(expandedComments === post.id ? null : post.id)}
-                    className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-teal-600 transition-colors"
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                    <span>{post.comments_count}</span>
-                  </button>
-                  <button
-                    onClick={() => handleRepost(post.id)}
-                    className={`flex items-center gap-1.5 text-xs transition-colors ${
-                      reposted[post.id] ? "text-green-500" : "text-slate-500 hover:text-green-500"
-                    }`}
-                  >
-                    <Repeat2 className="w-4 h-4" /> {reposted[post.id] ? "Reposted" : "Repost"}
-                  </button>
-                  <button
-                    onClick={() => handleShare(post.id)}
-                    className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-blue-500 transition-colors"
-                  >
-                    <Share2 className="w-4 h-4" /> Share
-                  </button>
-                  <button
-                    onClick={() => handleBookmark(post.id)}
-                    className={`ml-auto transition-colors ${bookmarked[post.id] ? "text-gold-400" : "text-slate-400 hover:text-gold-400"}`}
-                  >
-                    <Bookmark className={`w-4 h-4 ${bookmarked[post.id] ? "fill-current" : ""}`} />
-                  </button>
+                <div className="px-4 pt-3 flex flex-wrap gap-1.5">
+                  {post.clip.tags.map((tag) => (
+                    <span key={tag} className="px-2 py-0.5 rounded text-[11px] bg-slate-50 text-slate-500 border border-slate-100">
+                      #{tag}
+                    </span>
+                  ))}
                 </div>
 
-                {/* Comments section */}
-                {expandedComments === post.id && (
-                  <div className="mt-4 pt-3 border-t border-slate-100">
-                    <div className="space-y-3 mb-3">
-                      {(localComments[post.id] || []).length > 0 ? (
-                        (localComments[post.id] || []).map((comment) => (
-                          <div key={comment.id} className="flex items-start gap-2.5">
-                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-navy-900 to-navy-700 flex items-center justify-center text-white font-display font-bold text-[9px] shrink-0">
-                              {comment.initials}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs font-semibold text-navy-900">{comment.author}</span>
-                                <span className="text-[10px] text-slate-400">{comment.timeAgo}</span>
-                              </div>
-                              <p className="text-xs text-slate-600 mt-0.5">{comment.content}</p>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-xs text-slate-400 italic">
-                          No comments yet. Be the first to respond.
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && handleReply(post.id)}
-                        placeholder="Write a comment..."
-                        className="flex-1 text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30"
-                      />
-                      <button
-                        onClick={() => handleReply(post.id)}
-                        className="px-3 py-2 bg-teal-500 text-white text-xs font-semibold rounded-lg hover:bg-teal-400 transition-all"
-                      >
-                        Reply
-                      </button>
-                    </div>
+                {/* Stats + Actions */}
+                <div className="px-4 py-3">
+                  <div className="flex items-center gap-3 text-[11px] text-slate-400 mb-3">
+                    <span className="flex items-center gap-1"><Eye className="w-3 h-3" /> {post.clip.views.toLocaleString()} views</span>
+                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {post.clip.uploadedAt}</span>
                   </div>
-                )}
+
+                  <div className="flex items-center gap-4 pt-3 border-t border-slate-100">
+                    <button
+                      onClick={() => handleLike(post.id)}
+                      className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${
+                        post.userLiked ? "text-red-500" : "text-slate-500 hover:text-red-500"
+                      }`}
+                    >
+                      <Heart className={`w-4 h-4 ${post.userLiked ? "fill-current" : ""}`} />
+                      <span>{post.likes}</span>
+                    </button>
+                    <button
+                      onClick={() => setExpandedComments(expandedComments === post.id ? null : post.id)}
+                      className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-teal-600 transition-colors"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                      <span>{post.comments + (localComments[post.id]?.length || 0) - (mockComments[post.id]?.length || 0)}</span>
+                    </button>
+                    <button
+                      onClick={() => handleShare(post.id)}
+                      className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-blue-500 transition-colors"
+                    >
+                      <Share2 className="w-4 h-4" /> Share
+                    </button>
+                    <Link
+                      href={`/coach/${post.coachId}/film`}
+                      className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-teal-600 transition-colors"
+                    >
+                      <Film className="w-4 h-4" /> Film Room
+                    </Link>
+                    <button
+                      onClick={() => handleBookmark(post.id)}
+                      className={`ml-auto transition-colors ${bookmarked[post.id] ? "text-gold-400" : "text-slate-400 hover:text-gold-400"}`}
+                    >
+                      <Bookmark className={`w-4 h-4 ${bookmarked[post.id] ? "fill-current" : ""}`} />
+                    </button>
+                  </div>
+
+                  {/* Comments */}
+                  {expandedComments === post.id && (
+                    <div className="mt-4 pt-3 border-t border-slate-100">
+                      <div className="space-y-3 mb-3">
+                        {(localComments[post.id] || []).length > 0 ? (
+                          (localComments[post.id] || []).map((comment) => (
+                            <div key={comment.id} className="flex items-start gap-2.5">
+                              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-navy-900 to-navy-700 flex items-center justify-center text-white font-display font-bold text-[9px] shrink-0">
+                                {comment.initials}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs font-semibold text-navy-900">{comment.author}</span>
+                                  <span className="text-[10px] text-slate-400">{comment.timeAgo}</span>
+                                </div>
+                                <p className="text-xs text-slate-600 mt-0.5">{comment.content}</p>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-xs text-slate-400 italic">
+                            No comments yet. Be the first to break down this film.
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={commentText}
+                          onChange={(e) => setCommentText(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && handleReply(post.id)}
+                          placeholder="Drop a comment on this film..."
+                          className="flex-1 text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+                        />
+                        <button
+                          onClick={() => handleReply(post.id)}
+                          className="px-3 py-2 bg-teal-500 text-white text-xs font-semibold rounded-lg hover:bg-teal-400 transition-all"
+                        >
+                          Reply
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {filteredPosts.length === 0 && (
           <div className="text-center py-20">
-            <TrendingUp className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <h3 className="font-display font-semibold text-navy-900 text-lg mb-2">No posts yet</h3>
-            <p className="text-slate-500 text-sm">Be the first to share an insight with the coaching community.</p>
+            <Film className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+            <h3 className="font-display font-semibold text-navy-900 text-lg mb-2">No film posts found</h3>
+            <p className="text-slate-500 text-sm">Try a different filter to see more plays and breakdowns.</p>
           </div>
         )}
       </div>

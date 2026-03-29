@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { coaches } from "@/data/coaches";
+import { coaches, filmClips, recruitingData } from "@/data/coaches";
 import {
   MapPin,
   Briefcase,
@@ -25,6 +25,9 @@ import {
   Film,
   Target,
   Trophy,
+  Play,
+  Heart,
+  Globe,
 } from "lucide-react";
 
 export function generateStaticParams() {
@@ -334,6 +337,113 @@ export default function CoachProfilePage({
                 View full coaching tree <ChevronRight className="w-4 h-4" />
               </Link>
             </section>
+
+            {/* Film Highlights */}
+            {(() => {
+              const coachClips = filmClips.filter((c) => c.coachId === coach.id).slice(0, 3);
+              if (coachClips.length === 0) return null;
+              return (
+                <section className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8">
+                  <h2 className="font-display font-bold text-lg text-navy-900 flex items-center gap-2 mb-2">
+                    <Film className="w-5 h-5 text-red-500" />
+                    Film Room
+                    <span className="ml-auto text-sm font-normal text-slate-400">{filmClips.filter((c) => c.coachId === coach.id).length} clips</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mb-4">Plays, schemes, and drills from {coach.firstName}&apos;s playbook.</p>
+                  <div className="space-y-3">
+                    {coachClips.map((clip) => (
+                      <div key={clip.id} className="flex gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors">
+                        <div className={`w-20 h-14 rounded-lg bg-gradient-to-br ${clip.thumbnailColor} flex items-center justify-center shrink-0`}>
+                          <Play className="w-5 h-5 text-white ml-0.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-display font-semibold text-sm text-navy-900 truncate">{clip.title}</div>
+                          <div className="text-xs text-slate-500 mt-0.5 line-clamp-1">{clip.description}</div>
+                          <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-400">
+                            <span className="flex items-center gap-0.5"><Eye className="w-3 h-3" /> {clip.views.toLocaleString()}</span>
+                            <span className="flex items-center gap-0.5"><Heart className="w-3 h-3" /> {clip.likes}</span>
+                            <span className="flex items-center gap-0.5"><Clock className="w-3 h-3" /> {clip.duration}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <Link href={`/coach/${coach.id}/film`} className="inline-flex items-center gap-1 mt-4 text-sm text-teal-600 font-medium hover:text-teal-700 transition-colors">
+                    View all film <ChevronRight className="w-4 h-4" />
+                  </Link>
+                </section>
+              );
+            })()}
+
+            {/* Recruiting Territories */}
+            {(() => {
+              const data = recruitingData[coach.id];
+              if (!data) return null;
+              return (
+                <section className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8">
+                  <h2 className="font-display font-bold text-lg text-navy-900 flex items-center gap-2 mb-2">
+                    <Target className="w-5 h-5 text-green-600" />
+                    Recruiting
+                  </h2>
+                  <p className="text-xs text-slate-500 mb-4">{coach.firstName}&apos;s recruiting footprint across the U.S.</p>
+
+                  {/* Quick Stats */}
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-center">
+                      <div className="font-mono text-lg font-bold text-navy-900">{data.stats.totalRecruitsSigned}</div>
+                      <div className="text-[10px] text-slate-500">Signed</div>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-center">
+                      <div className="font-mono text-lg font-bold text-navy-900">{data.stats.statesCovered}</div>
+                      <div className="text-[10px] text-slate-500">States</div>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-center">
+                      <div className="font-mono text-lg font-bold text-navy-900">{data.stats.avgClassRating.toFixed(1)}★</div>
+                      <div className="text-[10px] text-slate-500">Avg Rating</div>
+                    </div>
+                  </div>
+
+                  {/* Territory Map */}
+                  <div className="space-y-2 mb-4">
+                    {data.territories.map((t) => (
+                      <div key={t.stateAbbr} className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                        <div className="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center shrink-0">
+                          <span className="font-mono font-bold text-sm text-navy-900">{t.stateAbbr}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-display font-semibold text-sm text-navy-900">{t.state}</span>
+                            <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${
+                              t.strengthLevel === "primary" ? "bg-teal-500/10 text-teal-700 border-teal-200" :
+                              t.strengthLevel === "secondary" ? "bg-blue-500/10 text-blue-700 border-blue-200" :
+                              "bg-amber-500/10 text-amber-700 border-amber-200"
+                            }`}>{t.strengthLevel}</span>
+                          </div>
+                          <div className="text-[11px] text-slate-500">{t.recruitsSignedFromHere} recruits · {t.region}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Top Find */}
+                  {data.highlights.length > 0 && (
+                    <div className="p-3 rounded-xl bg-gold-400/5 border border-gold-400/20 mb-4">
+                      <div className="flex items-center gap-1.5 mb-1.5">
+                        <Trophy className="w-3.5 h-3.5 text-gold-400" />
+                        <span className="text-[10px] font-bold text-amber-700 uppercase tracking-wider">Top Recruiting Find</span>
+                      </div>
+                      <div className="font-display font-semibold text-sm text-navy-900">{data.highlights[0].playerName}</div>
+                      <div className="text-xs text-slate-500">{data.highlights[0].position} — {data.highlights[0].highSchool}, {data.highlights[0].state}</div>
+                      <div className="text-xs text-amber-700 font-medium mt-1">{data.highlights[0].achievement}</div>
+                    </div>
+                  )}
+
+                  <Link href={`/coach/${coach.id}/recruiting`} className="inline-flex items-center gap-1 text-sm text-teal-600 font-medium hover:text-teal-700 transition-colors">
+                    View full recruiting profile <ChevronRight className="w-4 h-4" />
+                  </Link>
+                </section>
+              );
+            })()}
 
             {/* Endorsements preview */}
             {coach.endorsements.length > 0 && (
