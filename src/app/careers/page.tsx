@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { Briefcase, MapPin, Clock } from "lucide-react";
 
 const openings = [
-  { title: "Senior Full-Stack Engineer", team: "Engineering", location: "Remote", type: "Full-time", desc: "Build the features that connect coaches across the country. React, Next.js, Supabase." },
+  { title: "Senior Full-Stack Engineer", team: "Engineering", location: "Remote", type: "Full-time", desc: "Build the features that connect coaches across the country. React, Next.js, TypeScript." },
   { title: "Product Designer", team: "Design", location: "Remote", type: "Full-time", desc: "Design intuitive experiences for coaches navigating their careers." },
   { title: "Community Manager", team: "Operations", location: "Remote", type: "Full-time", desc: "Build and nurture the CoachConnect coaching community across social platforms and events." },
   { title: "Content & Partnerships Lead", team: "Growth", location: "Remote", type: "Full-time", desc: "Partner with coaching organizations, conferences, and media to expand our reach." },

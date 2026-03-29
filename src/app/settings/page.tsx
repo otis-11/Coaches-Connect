@@ -5,7 +5,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/components/Toast";
 import { useAuth } from "@/lib/AuthContext";
-import { supabase } from "@/lib/supabase";
 import {
   User,
   Lock,
@@ -40,27 +39,11 @@ export default function SettingsPage() {
   const [sideOfBall, setSideOfBall] = useState(profile?.side_of_ball || "");
 
   const handleSave = async () => {
-    if (!user) return;
     setSaving(true);
-    const { error } = await supabase.from("cc_profiles").update({
-      first_name: firstName,
-      last_name: lastName,
-      title,
-      institution,
-      location,
-      bio,
-      philosophy,
-      sport,
-      level,
-      side_of_ball: sideOfBall,
-      updated_at: new Date().toISOString(),
-    }).eq("id", user.id);
-
-    if (!error) {
-      await refreshProfile();
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
-    }
+    // No backend — local state only
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+    showToast("Settings saved (local only — no backend connected)");
     setSaving(false);
   };
 
@@ -284,7 +267,7 @@ export default function SettingsPage() {
                   ) : (
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-red-50 border border-red-200">
                       <span className="text-xs text-red-600">Are you sure? This cannot be undone.</span>
-                      <button onClick={() => { setShowDeleteConfirm(false); showToast("Account deletion requires Supabase integration", "info"); }} className="px-3 py-1.5 text-xs font-semibold bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all">
+                      <button onClick={() => { setShowDeleteConfirm(false); showToast("Account deletion is not available yet"); }} className="px-3 py-1.5 text-xs font-semibold bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all">
                         Confirm Delete
                       </button>
                       <button onClick={() => setShowDeleteConfirm(false)} className="px-3 py-1.5 text-xs font-semibold border border-slate-200 text-slate-500 rounded-lg hover:bg-white transition-all">

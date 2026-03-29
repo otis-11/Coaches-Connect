@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/components/Toast";
 import { useAuth } from "@/lib/AuthContext";
-import { supabase } from "@/lib/supabase";
 import {
   Heart,
   MessageSquare,
@@ -64,7 +63,7 @@ const postTypes = [
   { value: "article", label: "Article", color: "bg-orange-50 text-orange-600" },
 ];
 
-// Mock feed data for demo (used when no Supabase posts exist yet)
+// Mock feed data for demo
 const mockComments: Record<string, { id: string; author: string; initials: string; title: string; content: string; timeAgo: string }[]> = {
   "mock-1": [
     { id: "c1", author: "Devon Jackson", initials: "DJ", title: "DB Coach, Tennessee State", content: "This is amazing! Would love to attend. Is there a limit on spots?", timeAgo: "2h ago" },
@@ -229,86 +228,34 @@ export default function FeedPage() {
     }
   };
 
-  // Load posts from Supabase on mount
-  useEffect(() => {
-    loadPosts();
-  }, []);
 
-  const loadPosts = async () => {
-    const { data, error } = await supabase
-      .from("cc_posts")
-      .select(`*, author:cc_profiles!author_id(first_name, last_name, title, institution, sport, avatar_url)`)
-      .order("created_at", { ascending: false })
-      .limit(50);
-
-    if (data && data.length > 0) {
-      const enriched = await Promise.all(
-        data.map(async (post: any) => {
-          const { count: likesCount } = await supabase
-            .from("cc_post_likes")
-            .select("*", { count: "exact", head: true })
-            .eq("post_id", post.id);
-
-          const { count: commentsCount } = await supabase
-            .from("cc_post_comments")
-            .select("*", { count: "exact", head: true })
-            .eq("post_id", post.id);
-
-          let userLiked = false;
-          if (user) {
-            const { data: likeData } = await supabase
-              .from("cc_post_likes")
-              .select("id")
-              .eq("post_id", post.id)
-              .eq("user_id", user.id)
-              .single();
-            userLiked = !!likeData;
-          }
-
-          return {
-            ...post,
-            likes_count: likesCount || 0,
-            comments_count: commentsCount || 0,
-            user_liked: userLiked,
-          };
-        })
-      );
-      setPosts([...enriched, ...mockFeed]);
-    }
-  };
-
-  const handlePost = async () => {
-    if (!newPost.trim() || !user) return;
+  const handlePost = () => {
+    if (!newPost.trim()) return;
     setPosting(true);
-
-    const { error } = await supabase.from("cc_posts").insert({
-      author_id: user.id,
+    const newPostObj: Post = {
+      id: `local-${Date.now()}`,
+      author_id: "local",
       content: newPost.trim(),
       post_type: postType,
       tags,
-    });
-
-    if (!error) {
-      setNewPost("");
-      setTags([]);
-      setPostType("update");
-      await loadPosts();
-    }
+      image_url: null,
+      created_at: new Date().toISOString(),
+      author: profile
+        ? { first_name: profile.first_name, last_name: profile.last_name, title: profile.title, institution: profile.institution, sport: profile.sport, avatar_url: profile.avatar_url }
+        : { first_name: "You", last_name: "", title: null, institution: null, sport: null, avatar_url: null },
+      likes_count: 0,
+      comments_count: 0,
+      user_liked: false,
+    };
+    setPosts((prev) => [newPostObj, ...prev]);
+    setNewPost("");
+    setTags([]);
+    setPostType("update");
     setPosting(false);
+    showToast("Post published");
   };
 
-  const handleLike = async (postId: string) => {
-    if (!user || postId.startsWith("mock")) return;
-
-    const post = posts.find((p) => p.id === postId);
-    if (!post) return;
-
-    if (post.user_liked) {
-      await supabase.from("cc_post_likes").delete().eq("post_id", postId).eq("user_id", user.id);
-    } else {
-      await supabase.from("cc_post_likes").insert({ post_id: postId, user_id: user.id });
-    }
-
+  const handleLike = (postId: string) => {
     setPosts((prev) =>
       prev.map((p) =>
         p.id === postId
@@ -511,7 +458,7 @@ export default function FeedPage() {
                 {/* Actions */}
                 <div className="flex items-center gap-4 pt-3 border-t border-slate-100">
                   <button
-                    onClick={() => post.id.startsWith("mock") ? handleMockLike(post.id) : handleLike(post.id)}
+                    onClick={() => handleLike(post.id)}
                     className={`flex items-center gap-1.5 text-xs transition-colors ${
                       post.user_liked ? "text-red-500" : "text-slate-500 hover:text-red-500"
                     }`}

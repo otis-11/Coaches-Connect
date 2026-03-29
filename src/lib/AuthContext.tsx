@@ -1,8 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { supabase, isSupabaseConfigured } from "./supabase";
-import { User, Session } from "@supabase/supabase-js";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 interface Profile {
   id: string;
@@ -39,9 +37,14 @@ interface Profile {
   created_at: string;
 }
 
+interface User {
+  id: string;
+  email: string;
+}
+
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
+  session: null;
   profile: Profile | null;
   loading: boolean;
   signUp: (email: string, password: string, firstName: string, lastName: string, sport: string) => Promise<{ error: any }>;
@@ -54,93 +57,30 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(false);
 
-  const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from("cc_profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    setProfile(data);
+  const signUp = async (_email: string, _password: string, _firstName: string, _lastName: string, _sport: string) => {
+    // No backend — stub only
+    return { error: null };
   };
 
-  useEffect(() => {
-    if (!isSupabaseConfigured) {
-      setLoading(false);
-      return;
-    }
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-      setLoading(false);
-    }).catch(() => {
-      setLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await fetchProfile(session.user.id);
-        } else {
-          setProfile(null);
-        }
-        setLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const signUp = async (email: string, password: string, firstName: string, lastName: string, sport: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { first_name: firstName, last_name: lastName, sport },
-      },
-    });
-
-    if (!error && data.user) {
-      await supabase.from("cc_profiles").insert({
-        id: data.user.id,
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        sport,
-      });
-      await fetchProfile(data.user.id);
-    }
-
-    return { error };
-  };
-
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error };
+  const signIn = async (_email: string, _password: string) => {
+    // No backend — stub only
+    return { error: null };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
     setUser(null);
-    setSession(null);
     setProfile(null);
   };
 
   const refreshProfile = async () => {
-    if (user) await fetchProfile(user.id);
+    // No backend — no-op
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, profile, loading, signUp, signIn, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{ user, session: null, profile, loading, signUp, signIn, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );
