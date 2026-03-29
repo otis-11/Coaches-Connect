@@ -60,13 +60,63 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading] = useState(false);
 
-  const signUp = async (_email: string, _password: string, _firstName: string, _lastName: string, _sport: string) => {
-    // No backend — stub only
+  const buildProfile = (email: string, firstName: string, lastName: string, sport: string): Profile => ({
+    id: `mock-${Date.now()}`,
+    first_name: firstName,
+    last_name: lastName,
+    email,
+    avatar_url: null,
+    banner_color: "#0F172A",
+    title: "Coaching Professional",
+    institution: null,
+    sport,
+    level: null,
+    location: null,
+    state: null,
+    years_experience: 0,
+    philosophy: null,
+    bio: null,
+    roles: [],
+    systems: [],
+    certifications: [],
+    awards: [],
+    conferences: [],
+    recruiting_territories: [],
+    scheme_tags: [],
+    culture_tags: [],
+    side_of_ball: null,
+    open_to_opportunities: true,
+    availability_status: "open",
+    is_verified: false,
+    is_admin: false,
+    role: "coach",
+    profile_views: 0,
+    search_appearances: 0,
+    created_at: new Date().toISOString(),
+  });
+
+  const signUp = async (email: string, password: string, firstName: string, lastName: string, sport: string) => {
+    if (!email || !password || !firstName || !lastName) {
+      return { error: { message: "All fields are required." } };
+    }
+    const mockUser: User = { id: `user-${Date.now()}`, email };
+    const mockProfile = buildProfile(email, firstName, lastName, sport);
+    setUser(mockUser);
+    setProfile(mockProfile);
     return { error: null };
   };
 
-  const signIn = async (_email: string, _password: string) => {
-    // No backend — stub only
+  const signIn = async (email: string, password: string) => {
+    if (!email || !password) {
+      return { error: { message: "Email and password are required." } };
+    }
+    const mockUser: User = { id: `user-${Date.now()}`, email };
+    const firstName = email.split("@")[0].split(".")[0];
+    const lastName = email.split("@")[0].split(".")[1] || "Coach";
+    const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+    const mockProfile = buildProfile(email, capitalize(firstName), capitalize(lastName), "football");
+    setUser(mockUser);
+    setProfile(mockProfile);
     return { error: null };
   };
 
