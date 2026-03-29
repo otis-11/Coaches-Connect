@@ -27,6 +27,19 @@ export interface Coach {
   certifications: string[];
   awards: string[];
   conferences: string[];
+  schoolRecords: {
+    institution: string;
+    years: string;
+    wins: number;
+    losses: number;
+    ties?: number;
+    note?: string;
+  }[];
+  personalRecord: {
+    wins: number;
+    losses: number;
+    ties?: number;
+  };
   endorsements: {
     author: string;
     authorTitle: string;
@@ -141,6 +154,32 @@ export const coaches: Coach[] = [
       "Nike Coach of the Year Clinic 2022",
       "AFCA National Convention 2021",
     ],
+    schoolRecords: [
+      {
+        institution: "Central State University",
+        years: "2024-Present",
+        wins: 8,
+        losses: 3,
+        note: "SIAC Championship Appearance",
+      },
+      {
+        institution: "Youngstown State",
+        years: "2020-2024",
+        wins: 29,
+        losses: 19,
+        note: "FCS Playoff Qualifier (2023)",
+      },
+      {
+        institution: "Walsh University",
+        years: "2018-2020",
+        wins: 14,
+        losses: 8,
+      },
+    ],
+    personalRecord: {
+      wins: 51,
+      losses: 30,
+    },
     endorsements: [
       {
         author: "Coach David Patterson",
@@ -269,6 +308,32 @@ export const coaches: Coach[] = [
       "PGC Basketball Coaching Clinic 2024",
       "NABC Convention 2023",
     ],
+    schoolRecords: [
+      {
+        institution: "Pacific Lutheran University",
+        years: "2023-Present",
+        wins: 47,
+        losses: 18,
+        note: "NWC Tournament Champions (2025)",
+      },
+      {
+        institution: "Whitworth University",
+        years: "2020-2023",
+        wins: 62,
+        losses: 26,
+        note: "NWC Regular Season Co-Champions (2022)",
+      },
+      {
+        institution: "University of Portland",
+        years: "2015-2020",
+        wins: 78,
+        losses: 72,
+      },
+    ],
+    personalRecord: {
+      wins: 187,
+      losses: 116,
+    },
     endorsements: [
       {
         author: "Coach Linda Ramirez",
@@ -379,6 +444,25 @@ export const coaches: Coach[] = [
       "AFCA National Convention 2024",
       "Nike Coach of the Year Clinic 2023",
     ],
+    schoolRecords: [
+      {
+        institution: "Tennessee State University",
+        years: "2020-Present",
+        wins: 24,
+        losses: 21,
+        note: "OVC Semifinalists (2023)",
+      },
+      {
+        institution: "Lane College",
+        years: "2021-2023",
+        wins: 13,
+        losses: 9,
+      },
+    ],
+    personalRecord: {
+      wins: 37,
+      losses: 30,
+    },
     endorsements: [
       {
         author: "Coach Derrick Mason",
@@ -492,6 +576,38 @@ export const coaches: Coach[] = [
       "NABC Convention 2023",
       "Sloan Sports Analytics Conference 2023",
     ],
+    schoolRecords: [
+      {
+        institution: "RGV Vipers (G-League)",
+        years: "2024-Present",
+        wins: 22,
+        losses: 14,
+        note: "G-League Showcase Cup Qualifier",
+      },
+      {
+        institution: "UT Rio Grande Valley",
+        years: "2021-2024",
+        wins: 52,
+        losses: 42,
+        note: "WAC Tournament Semifinals (2023)",
+      },
+      {
+        institution: "Texas A&M Kingsville",
+        years: "2019-2021",
+        wins: 33,
+        losses: 21,
+      },
+      {
+        institution: "UT San Antonio",
+        years: "2017-2019",
+        wins: 39,
+        losses: 25,
+      },
+    ],
+    personalRecord: {
+      wins: 146,
+      losses: 102,
+    },
     endorsements: [
       {
         author: "Coach Matt Brase",
@@ -586,6 +702,19 @@ export const coaches: Coach[] = [
     ],
     awards: [],
     conferences: ["AFCA National Convention 2024", "Glazier Coaching Clinic 2023"],
+    schoolRecords: [
+      {
+        institution: "Grand View University",
+        years: "2022-Present",
+        wins: 26,
+        losses: 5,
+        note: "NAIA National Semifinalists (2024)",
+      },
+    ],
+    personalRecord: {
+      wins: 26,
+      losses: 5,
+    },
     endorsements: [
       {
         author: "Coach Joe Woodley",
@@ -701,6 +830,39 @@ export const coaches: Coach[] = [
       "NCAA Women's Final Four Coaching Symposium 2024",
       "WBCA National Convention 2023",
     ],
+    schoolRecords: [
+      {
+        institution: "Howard University",
+        years: "2022-Present",
+        wins: 58,
+        losses: 31,
+        note: "MEAC Tournament Champions (2024)",
+      },
+      {
+        institution: "University of South Carolina",
+        years: "2019-2022",
+        wins: 82,
+        losses: 15,
+        note: "National Champions (2022), Final Four (2021)",
+      },
+      {
+        institution: "Coppin State University",
+        years: "2016-2019",
+        wins: 38,
+        losses: 52,
+      },
+      {
+        institution: "Norfolk State University",
+        years: "2014-2016",
+        wins: 35,
+        losses: 25,
+        note: "MEAC Regular Season Champions (2015)",
+      },
+    ],
+    personalRecord: {
+      wins: 213,
+      losses: 123,
+    },
     endorsements: [
       {
         author: "Coach Dawn Staley",
@@ -728,6 +890,329 @@ export const coaches: Coach[] = [
     searchAppearances: 1102,
   },
 ];
+
+// ── Film Room ──────────────────────────────────────────────────────────
+
+export interface FilmClip {
+  id: string;
+  coachId: string;
+  title: string;
+  description: string;
+  category: "play" | "scheme" | "drill" | "game-film" | "breakdown";
+  sport: "football" | "basketball";
+  tags: string[];
+  thumbnailColor: string;
+  duration: string;
+  views: number;
+  likes: number;
+  uploadedAt: string;
+  formation?: string;
+  result?: string;
+}
+
+export const filmClips: FilmClip[] = [
+  {
+    id: "clip-1",
+    coachId: "marcus-williams",
+    title: "RPO Glance Concept vs. Cover 3",
+    description: "Our bread-and-butter RPO that accounted for 14 TDs this season. QB reads the flat defender — if he widens, throw the glance route behind him. If he sits, hand off the inside zone.",
+    category: "play",
+    sport: "football",
+    tags: ["RPO", "Air Raid", "Cover 3 Beater", "Quick Game"],
+    thumbnailColor: "from-teal-500 to-emerald-600",
+    duration: "2:34",
+    views: 1243,
+    likes: 87,
+    uploadedAt: "2024-11-15",
+    formation: "11 Personnel — Trips Right",
+    result: "14 TDs, 78% completion rate on this concept in 2024",
+  },
+  {
+    id: "clip-2",
+    coachId: "marcus-williams",
+    title: "Tempo No-Huddle: 2-Minute Drill Install",
+    description: "Full breakdown of our 2-minute offense install. Covers signal system, formation checks, and the 5 plays we rep every Tuesday for end-of-half situations.",
+    category: "scheme",
+    sport: "football",
+    tags: ["Tempo", "No-Huddle", "2-Minute Drill", "Situational"],
+    thumbnailColor: "from-blue-500 to-indigo-600",
+    duration: "8:12",
+    views: 892,
+    likes: 64,
+    uploadedAt: "2024-10-22",
+    formation: "Multiple",
+    result: "Scored on 6 of 8 end-of-half possessions in 2024",
+  },
+  {
+    id: "clip-3",
+    coachId: "marcus-williams",
+    title: "QB Progression Read Drill — 3-Step Drop",
+    description: "Daily individual drill we use for QBs to train their eyes through a full-field progression. High-low read to boundary, backside check-down. Film from spring practice.",
+    category: "drill",
+    sport: "football",
+    tags: ["QB Development", "Fundamentals", "Individual Drill"],
+    thumbnailColor: "from-amber-500 to-orange-600",
+    duration: "4:47",
+    views: 2105,
+    likes: 156,
+    uploadedAt: "2024-04-08",
+  },
+  {
+    id: "clip-4",
+    coachId: "marcus-williams",
+    title: "Game Film: Central State vs. Tuskegee — 4th Quarter Comeback",
+    description: "Full 4th quarter cut-up from our comeback win over Tuskegee. Down 17 entering the quarter, we ran our tempo package and scored 24 unanswered. Annotated with play calls.",
+    category: "game-film",
+    sport: "football",
+    tags: ["Game Film", "4th Quarter", "Comeback", "SIAC"],
+    thumbnailColor: "from-red-500 to-rose-600",
+    duration: "12:30",
+    views: 3421,
+    likes: 234,
+    uploadedAt: "2024-10-06",
+    result: "Central State 31, Tuskegee 24 — 24 unanswered in Q4",
+  },
+  {
+    id: "clip-5",
+    coachId: "marcus-williams",
+    title: "Film Breakdown: How We Attack Cover 2",
+    description: "Whiteboard + film breakdown of our Cover 2 attack package. Four-verticals, smash concept, and the sail route that gave us 3 TDs in the SIAC championship.",
+    category: "breakdown",
+    sport: "football",
+    tags: ["Film Study", "Cover 2", "Passing Game", "Whiteboard"],
+    thumbnailColor: "from-purple-500 to-violet-600",
+    duration: "6:55",
+    views: 1678,
+    likes: 119,
+    uploadedAt: "2024-12-01",
+    formation: "11 & 12 Personnel",
+    result: "3 TDs vs. Cover 2 in SIAC Championship",
+  },
+  {
+    id: "clip-6",
+    coachId: "sarah-chen",
+    title: "Pack-Line Defense: Help-Side Principles",
+    description: "Full teaching progression for our pack-line defense. Covers gap positioning, help-side rotation, and the closeout technique that held opponents to 38% FG in conference play.",
+    category: "scheme",
+    sport: "basketball",
+    tags: ["Pack-Line", "Defense", "Help-Side", "Teaching Progression"],
+    thumbnailColor: "from-orange-500 to-red-600",
+    duration: "7:22",
+    views: 1890,
+    likes: 142,
+    uploadedAt: "2025-01-10",
+    result: "Opponents shot 38% FG in NWC play",
+  },
+  {
+    id: "clip-7",
+    coachId: "sarah-chen",
+    title: "Motion Offense: Continuity Ball Screen Action",
+    description: "Our primary half-court set. 5-out to ball screen, with 3 reads off the pick. Film from our NWC Tournament run showing how it creates layup-line looks against switching defenses.",
+    category: "play",
+    sport: "basketball",
+    tags: ["Motion Offense", "Ball Screen", "NWC Tournament"],
+    thumbnailColor: "from-teal-500 to-cyan-600",
+    duration: "5:18",
+    views: 1245,
+    likes: 98,
+    uploadedAt: "2025-03-02",
+    result: "1.12 PPP in NWC Tournament",
+  },
+  {
+    id: "clip-8",
+    coachId: "devon-jackson",
+    title: "Pattern Match Cover 3: Reroute & Rally",
+    description: "How we teach our DBs to pattern-match in Cover 3. Film from the TSU vs. SEMO game showing our corners rerouting #1 and rallying to the flat when #2 goes out.",
+    category: "scheme",
+    sport: "football",
+    tags: ["Coverage", "Pattern Match", "DB Technique", "Cover 3"],
+    thumbnailColor: "from-blue-600 to-sky-500",
+    duration: "5:41",
+    views: 967,
+    likes: 73,
+    uploadedAt: "2024-09-20",
+    result: "3 INTs in pattern-match coverage this season",
+  },
+  {
+    id: "clip-9",
+    coachId: "devon-jackson",
+    title: "Press Coverage Drill Tape — Spring Ball 2024",
+    description: "Individual DB drill work focusing on press-bail technique, off-man footwork, and transition. Used this progression to develop two all-conference corners.",
+    category: "drill",
+    sport: "football",
+    tags: ["DB Drills", "Press Coverage", "Individual", "Spring Ball"],
+    thumbnailColor: "from-green-500 to-emerald-600",
+    duration: "3:55",
+    views: 1456,
+    likes: 101,
+    uploadedAt: "2024-04-15",
+  },
+  {
+    id: "clip-10",
+    coachId: "antonio-reyes",
+    title: "Spread PnR Reads: Roller vs. Pop Decision Tree",
+    description: "Player development session breaking down ball-handler reads in our primary pick-and-roll. When to turn the corner, when to hit the roller, when to skip to the corner.",
+    category: "breakdown",
+    sport: "basketball",
+    tags: ["Pick & Roll", "Decision Making", "Player Development"],
+    thumbnailColor: "from-red-500 to-pink-600",
+    duration: "6:10",
+    views: 2034,
+    likes: 167,
+    uploadedAt: "2024-12-18",
+    result: "G-League top 5 in PnR efficiency",
+  },
+  {
+    id: "clip-11",
+    coachId: "michelle-okafor",
+    title: "Press Break: 1-4 Flat vs. Full Court Pressure",
+    description: "Our press break that we installed after getting pressed out of the gym by Delaware State. Film from the rematch where we broke it 14 straight possessions.",
+    category: "play",
+    sport: "basketball",
+    tags: ["Press Break", "Full Court", "In-Game Adjustment"],
+    thumbnailColor: "from-purple-500 to-indigo-600",
+    duration: "4:33",
+    views: 1122,
+    likes: 88,
+    uploadedAt: "2025-02-14",
+    formation: "1-4 Flat",
+    result: "14/14 press break possessions in rematch",
+  },
+  {
+    id: "clip-12",
+    coachId: "tyler-brooks",
+    title: "Inside Zone Double-Team Technique",
+    description: "Teaching tape for our inside zone double-team at the point of attack. Covers hip-to-hip landmark, vertical displacement, and when to climb to the linebacker.",
+    category: "drill",
+    sport: "football",
+    tags: ["Offensive Line", "Inside Zone", "Technique", "Double Team"],
+    thumbnailColor: "from-green-600 to-lime-500",
+    duration: "5:02",
+    views: 876,
+    likes: 62,
+    uploadedAt: "2024-08-20",
+  },
+];
+
+// ── Recruiting Data ────────────────────────────────────────────────────
+
+export interface RecruitingTerritory {
+  state: string;
+  stateAbbr: string;
+  region: string;
+  recruitsSignedFromHere: number;
+  keyHighSchools: string[];
+  keyContacts: number;
+  strengthLevel: "primary" | "secondary" | "developing";
+}
+
+export interface RecruitHighlight {
+  id: string;
+  coachId: string;
+  playerName: string;
+  position: string;
+  highSchool: string;
+  city: string;
+  state: string;
+  signedYear: number;
+  starRating: number;
+  currentStatus: string;
+  achievement: string;
+  story: string;
+}
+
+export const recruitingData: Record<string, {
+  territories: RecruitingTerritory[];
+  highlights: RecruitHighlight[];
+  stats: {
+    totalRecruitsSigned: number;
+    statesCovered: number;
+    avgClassRating: number;
+    currentCommits: number;
+    offersOut: number;
+    topRegion: string;
+  };
+}> = {
+  "marcus-williams": {
+    territories: [
+      { state: "Ohio", stateAbbr: "OH", region: "Midwest", recruitsSignedFromHere: 18, keyHighSchools: ["Glenville HS", "St. Edward HS", "Massillon Washington HS", "Archbishop Hoban HS"], keyContacts: 24, strengthLevel: "primary" },
+      { state: "Georgia", stateAbbr: "GA", region: "Southeast", recruitsSignedFromHere: 9, keyHighSchools: ["Archer HS", "Colquitt County HS", "Grayson HS"], keyContacts: 15, strengthLevel: "primary" },
+      { state: "Florida", stateAbbr: "FL", region: "Southeast", recruitsSignedFromHere: 7, keyHighSchools: ["American Heritage", "IMG Academy", "Central HS (Miami)"], keyContacts: 12, strengthLevel: "secondary" },
+      { state: "Pennsylvania", stateAbbr: "PA", region: "Northeast", recruitsSignedFromHere: 5, keyHighSchools: ["Imhotep Institute", "St. Joseph's Prep", "Gateway HS"], keyContacts: 8, strengthLevel: "secondary" },
+      { state: "Alabama", stateAbbr: "AL", region: "Southeast", recruitsSignedFromHere: 4, keyHighSchools: ["Thompson HS", "Hoover HS"], keyContacts: 6, strengthLevel: "developing" },
+      { state: "Michigan", stateAbbr: "MI", region: "Midwest", recruitsSignedFromHere: 3, keyHighSchools: ["Cass Tech HS", "Belleville HS"], keyContacts: 5, strengthLevel: "developing" },
+    ],
+    highlights: [
+      { id: "rh-1", coachId: "marcus-williams", playerName: "James Crawford", position: "QB", highSchool: "Glenville HS", city: "Cleveland", state: "OH", signedYear: 2022, starRating: 3, currentStatus: "Starting QB — Central State (Senior)", achievement: "2x All-SIAC First Team, 3,200 passing yards in 2024", story: "Overlooked 3-star from Glenville who had zero FBS offers. Convinced him the RPO system would showcase his dual-threat ability. He's now the most decorated QB in SIAC history under our watch." },
+      { id: "rh-2", coachId: "marcus-williams", playerName: "Darius Hamilton", position: "WR", highSchool: "Archer HS", city: "Lawrenceville", state: "GA", signedYear: 2023, starRating: 2, currentStatus: "Breakout Sophomore — Central State", achievement: "All-SIAC Honorable Mention, 48 catches for 720 yards", story: "No stars, no film views. Found him at a 7-on-7 camp in Atlanta. Raw route runner with elite speed. After one year learning the playbook, he became our #1 receiver." },
+      { id: "rh-3", coachId: "marcus-williams", playerName: "Marcus Bell", position: "OL", highSchool: "Massillon Washington HS", city: "Massillon", state: "OH", signedYear: 2021, starRating: 2, currentStatus: "Signed UDFA — Cincinnati Bengals", achievement: "All-SIAC 3 years, Graded 92% in pass protection as senior", story: "6'4\" 275 lbs coming out of high school — undersized and under-recruited. We developed him over 4 years into a pro prospect. He's now in an NFL camp." },
+      { id: "rh-4", coachId: "marcus-williams", playerName: "Jaylen Torres", position: "QB", highSchool: "Imhotep Institute", city: "Philadelphia", state: "PA", signedYear: 2024, starRating: 3, currentStatus: "Redshirt Freshman — Central State", achievement: "Scout Team Player of the Year, 4.0 GPA", story: "Philadelphia kid with a cannon arm. Every school wanted him to switch positions — we told him he'd play QB. He redshirted behind Crawford and is the future of our program." },
+    ],
+    stats: { totalRecruitsSigned: 46, statesCovered: 6, avgClassRating: 2.4, currentCommits: 8, offersOut: 22, topRegion: "Ohio / Southeast" },
+  },
+  "sarah-chen": {
+    territories: [
+      { state: "Washington", stateAbbr: "WA", region: "Pacific Northwest", recruitsSignedFromHere: 14, keyHighSchools: ["Garfield HS", "Eastside Catholic", "Kentwood HS"], keyContacts: 18, strengthLevel: "primary" },
+      { state: "Oregon", stateAbbr: "OR", region: "Pacific Northwest", recruitsSignedFromHere: 8, keyHighSchools: ["Benson HS", "South Salem HS", "Sheldon HS"], keyContacts: 11, strengthLevel: "primary" },
+      { state: "California", stateAbbr: "CA", region: "West Coast", recruitsSignedFromHere: 6, keyHighSchools: ["Mater Dei HS", "Windward School", "St. Mary's Stockton"], keyContacts: 14, strengthLevel: "secondary" },
+      { state: "Idaho", stateAbbr: "ID", region: "Pacific Northwest", recruitsSignedFromHere: 3, keyHighSchools: ["Boise HS", "Coeur d'Alene HS"], keyContacts: 4, strengthLevel: "developing" },
+    ],
+    highlights: [
+      { id: "rh-5", coachId: "sarah-chen", playerName: "Anika Patel", position: "PG", highSchool: "Garfield HS", city: "Seattle", state: "WA", signedYear: 2023, starRating: 3, currentStatus: "Starting PG — Pacific Lutheran (Sophomore)", achievement: "NWC Freshman of the Year, 14.2 PPG / 6.8 APG", story: "Local kid who was committed to a D2 school. Sarah saw her at a summer league game and offered immediately. She became the engine of PLU's conference championship run." },
+      { id: "rh-6", coachId: "sarah-chen", playerName: "Destiny Moore", position: "C", highSchool: "Benson HS", city: "Portland", state: "OR", signedYear: 2024, starRating: 2, currentStatus: "Impact Freshman — Pacific Lutheran", achievement: "NWC Freshman All-Conference, 11.3 PPG / 8.1 RPG", story: "6'1\" center who was told she was too slow for college ball. Sarah saw her motor and footwork and knew she'd be a monster in the pack-line defense. She was right." },
+    ],
+    stats: { totalRecruitsSigned: 31, statesCovered: 4, avgClassRating: 2.7, currentCommits: 5, offersOut: 14, topRegion: "Pacific Northwest" },
+  },
+  "devon-jackson": {
+    territories: [
+      { state: "Tennessee", stateAbbr: "TN", region: "Southeast", recruitsSignedFromHere: 12, keyHighSchools: ["Pearl-Cohn HS", "Whitehaven HS", "Ensworth School", "Memphis Central HS"], keyContacts: 20, strengthLevel: "primary" },
+      { state: "Georgia", stateAbbr: "GA", region: "Southeast", recruitsSignedFromHere: 10, keyHighSchools: ["Archer HS", "North Gwinnett HS", "Cedar Grove HS"], keyContacts: 18, strengthLevel: "primary" },
+      { state: "Alabama", stateAbbr: "AL", region: "Southeast", recruitsSignedFromHere: 6, keyHighSchools: ["Hoover HS", "Thompson HS", "Hewitt-Trussville HS"], keyContacts: 10, strengthLevel: "secondary" },
+      { state: "Mississippi", stateAbbr: "MS", region: "Southeast", recruitsSignedFromHere: 5, keyHighSchools: ["South Panola HS", "Olive Branch HS"], keyContacts: 7, strengthLevel: "secondary" },
+      { state: "Texas", stateAbbr: "TX", region: "South", recruitsSignedFromHere: 3, keyHighSchools: ["South Oak Cliff HS", "DeSoto HS"], keyContacts: 5, strengthLevel: "developing" },
+    ],
+    highlights: [
+      { id: "rh-7", coachId: "devon-jackson", playerName: "Keenan Wright", position: "CB", highSchool: "Pearl-Cohn HS", city: "Nashville", state: "TN", signedYear: 2023, starRating: 3, currentStatus: "All-OVC Corner — Tennessee State (Junior)", achievement: "All-OVC Second Team, 4 INTs, 12 PBUs in 2024", story: "Nashville native who grew up 10 minutes from campus. Devon built a relationship with his family for two years before he committed. Now our best cover corner." },
+      { id: "rh-8", coachId: "devon-jackson", playerName: "Tre'von Davis", position: "S", highSchool: "Cedar Grove HS", city: "Ellenwood", state: "GA", signedYear: 2024, starRating: 3, currentStatus: "Immediate Impact Freshman — Tennessee State", achievement: "OVC Freshman Defensive Player of the Week (3x)", story: "Had FBS interest but wanted to play early. Devon sold him on the development plan and starting opportunity. He started Game 1 and never looked back." },
+    ],
+    stats: { totalRecruitsSigned: 36, statesCovered: 5, avgClassRating: 2.6, currentCommits: 6, offersOut: 18, topRegion: "Tennessee / Georgia" },
+  },
+  "antonio-reyes": {
+    territories: [
+      { state: "Texas", stateAbbr: "TX", region: "South", recruitsSignedFromHere: 15, keyHighSchools: ["San Antonio Wagner HS", "McAllen Memorial HS", "Edinburg Vela HS", "La Joya HS"], keyContacts: 22, strengthLevel: "primary" },
+      { state: "California", stateAbbr: "CA", region: "West Coast", recruitsSignedFromHere: 4, keyHighSchools: ["Long Beach Poly", "Fairfax HS"], keyContacts: 8, strengthLevel: "secondary" },
+    ],
+    highlights: [
+      { id: "rh-9", coachId: "antonio-reyes", playerName: "Diego Salazar", position: "PG", highSchool: "McAllen Memorial HS", city: "McAllen", state: "TX", signedYear: 2022, starRating: 2, currentStatus: "Two-Way Contract — Houston Rockets / RGV Vipers", achievement: "G-League All-Rookie Team, 18.4 PPG", story: "Border kid from the Valley with no national exposure. Antonio found him, developed his pick-and-roll game for 3 years at UTRGV, and he's now on a two-way NBA contract." },
+    ],
+    stats: { totalRecruitsSigned: 19, statesCovered: 2, avgClassRating: 2.2, currentCommits: 3, offersOut: 8, topRegion: "South Texas / Rio Grande Valley" },
+  },
+  "tyler-brooks": {
+    territories: [
+      { state: "Iowa", stateAbbr: "IA", region: "Midwest", recruitsSignedFromHere: 8, keyHighSchools: ["Dowling Catholic HS", "Southeast Polk HS", "Valley HS"], keyContacts: 12, strengthLevel: "primary" },
+      { state: "Nebraska", stateAbbr: "NE", region: "Midwest", recruitsSignedFromHere: 4, keyHighSchools: ["Omaha Westside HS", "Bellevue West HS"], keyContacts: 6, strengthLevel: "secondary" },
+      { state: "Minnesota", stateAbbr: "MN", region: "Midwest", recruitsSignedFromHere: 3, keyHighSchools: ["Eden Prairie HS", "Lakeville South HS"], keyContacts: 4, strengthLevel: "developing" },
+    ],
+    highlights: [
+      { id: "rh-10", coachId: "tyler-brooks", playerName: "Ethan Mulder", position: "OT", highSchool: "Dowling Catholic HS", city: "West Des Moines", state: "IA", signedYear: 2023, starRating: 2, currentStatus: "All-Conference OT — Grand View (Sophomore)", achievement: "Heart of America All-Conference, 0 sacks allowed in 2024", story: "6'5\" basketball player who Tyler converted to offensive tackle. Zero football experience before his senior year. Now he's the best tackle in the conference." },
+    ],
+    stats: { totalRecruitsSigned: 15, statesCovered: 3, avgClassRating: 2.1, currentCommits: 4, offersOut: 10, topRegion: "Iowa / Midwest" },
+  },
+  "michelle-okafor": {
+    territories: [
+      { state: "Maryland", stateAbbr: "MD", region: "Mid-Atlantic", recruitsSignedFromHere: 11, keyHighSchools: ["Bishop McNamara HS", "St. John's Catholic Prep", "Riverdale Baptist HS"], keyContacts: 16, strengthLevel: "primary" },
+      { state: "Virginia", stateAbbr: "VA", region: "Mid-Atlantic", recruitsSignedFromHere: 8, keyHighSchools: ["Paul VI Catholic HS", "T.C. Williams HS", "Woodbridge HS"], keyContacts: 14, strengthLevel: "primary" },
+      { state: "North Carolina", stateAbbr: "NC", region: "Southeast", recruitsSignedFromHere: 6, keyHighSchools: ["Northwest Guilford HS", "Vance HS", "Apex Friendship HS"], keyContacts: 10, strengthLevel: "secondary" },
+      { state: "New York", stateAbbr: "NY", region: "Northeast", recruitsSignedFromHere: 4, keyHighSchools: ["Christ the King HS", "South Shore HS"], keyContacts: 8, strengthLevel: "secondary" },
+      { state: "South Carolina", stateAbbr: "SC", region: "Southeast", recruitsSignedFromHere: 3, keyHighSchools: ["Ridge View HS", "Wilson HS"], keyContacts: 5, strengthLevel: "developing" },
+    ],
+    highlights: [
+      { id: "rh-11", coachId: "michelle-okafor", playerName: "Tiana Washington", position: "PF", highSchool: "Bishop McNamara HS", city: "Forestville", state: "MD", signedYear: 2022, starRating: 4, currentStatus: "WNBA Draft Prospect — Howard University (Senior)", achievement: "2x All-MEAC First Team, MEAC Tournament MVP (2024)", story: "Michelle's signature recruit. Top-100 national prospect who chose Howard over multiple Power 5 schools because of the vision Michelle and Coach Freeman pitched. She put Howard women's basketball on the map." },
+      { id: "rh-12", coachId: "michelle-okafor", playerName: "Jade Rivers", position: "PG", highSchool: "Paul VI Catholic HS", city: "Fairfax", state: "VA", signedYear: 2023, starRating: 3, currentStatus: "Starting PG — Howard University (Sophomore)", achievement: "MEAC Freshman of the Year, 12.8 PPG / 5.4 APG", story: "Had Georgetown and Virginia Tech offers. Michelle built a relationship over 18 months and sold her on being the face of a rising program. She delivered immediately." },
+    ],
+    stats: { totalRecruitsSigned: 32, statesCovered: 5, avgClassRating: 3.1, currentCommits: 7, offersOut: 16, topRegion: "DMV (DC/MD/VA)" },
+  },
+};
 
 export interface TreeNode {
   name: string;
