@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { coaches, filmClips, recruitingData } from "@/data/coaches";
+import { coaches, filmClips, recruitingData, recruitingDNAData, scoutingInsights, systemFitProfiles, coachClassifications } from "@/data/coaches";
 import {
   MapPin,
   Briefcase,
@@ -28,6 +28,12 @@ import {
   Play,
   Heart,
   Globe,
+  Zap,
+  ArrowUpRight,
+  Crosshair,
+  Lightbulb,
+  BarChart3,
+  Repeat2,
 } from "lucide-react";
 
 export function generateStaticParams() {
@@ -154,6 +160,52 @@ export default function CoachProfilePage({
                 </div>
               </div>
             </div>
+
+            {/* Coach DNA Classification */}
+            {(() => {
+              const cls = coachClassifications[coach.id];
+              if (!cls) return null;
+              const identityColors: Record<string, string> = {
+                Recruiter: "bg-purple-500/10 text-purple-700 border-purple-200",
+                Developer: "bg-teal-500/10 text-teal-700 border-teal-200",
+                Strategist: "bg-blue-500/10 text-blue-700 border-blue-200",
+                "Program Builder": "bg-amber-500/10 text-amber-700 border-amber-200",
+              };
+              const tagColors: Record<string, string> = {
+                "Culture Builder": "bg-rose-50 text-rose-600",
+                Tactician: "bg-slate-100 text-slate-600",
+                Innovator: "bg-violet-50 text-violet-600",
+                "Relationship Coach": "bg-pink-50 text-pink-600",
+                "Pro Pipeline": "bg-green-50 text-green-700",
+                "High Retention": "bg-teal-50 text-teal-600",
+                "Wide Network": "bg-blue-50 text-blue-600",
+                "Film-First": "bg-red-50 text-red-600",
+                Coordinator: "bg-indigo-50 text-indigo-600",
+                "Head Coach Ready": "bg-gold-400/10 text-amber-700",
+                "Athlete Converter": "bg-orange-50 text-orange-600",
+              };
+              return (
+                <div className="mt-5 p-4 rounded-xl bg-gradient-to-r from-slate-50 to-white border border-slate-200/80">
+                  <div className="flex flex-wrap items-center gap-2 mb-2.5">
+                    <span className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider border ${identityColors[cls.primaryIdentity] || "bg-slate-100 text-slate-600 border-slate-200"}`}>
+                      {cls.primaryIdentity}
+                    </span>
+                    {cls.coachingDNATags.slice(1).map((tag) => (
+                      <span key={tag} className={`px-2 py-0.5 rounded-md text-[10px] font-semibold ${tagColors[tag] || "bg-slate-50 text-slate-500"}`}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Lightbulb className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      <span className="font-semibold text-navy-900">Why hire {coach.firstName}?</span>{" "}
+                      {cls.whyHireThisCoach}
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Sub-nav */}
             <div className="mt-5 flex gap-1 overflow-x-auto">
@@ -445,6 +497,166 @@ export default function CoachProfilePage({
               );
             })()}
 
+            {/* Recruiting DNA */}
+            {(() => {
+              const dna = recruitingDNAData[coach.id];
+              if (!dna) return null;
+              const stageColors: Record<string, string> = {
+                Redshirt: "bg-slate-200 text-slate-600",
+                Bench: "bg-slate-200 text-slate-600",
+                "Scout Team": "bg-slate-200 text-slate-600",
+                Learning: "bg-slate-200 text-slate-600",
+                Backup: "bg-slate-300 text-slate-700",
+                Rotation: "bg-blue-100 text-blue-700",
+                "6th Man": "bg-blue-100 text-blue-700",
+                "6th Woman": "bg-blue-100 text-blue-700",
+                Scholarship: "bg-blue-100 text-blue-700",
+                Starter: "bg-teal-100 text-teal-700",
+                "All-Conference": "bg-amber-100 text-amber-700",
+                "All-American HM": "bg-orange-100 text-orange-700",
+                "NFL Camp": "bg-green-100 text-green-700",
+                "NFL PS": "bg-green-100 text-green-700",
+                "G-League": "bg-green-100 text-green-700",
+                "NBA 2-Way": "bg-green-100 text-green-700",
+                Pro: "bg-green-100 text-green-700",
+                "WNBA Prospect": "bg-green-100 text-green-700",
+                "Walk-On": "bg-slate-200 text-slate-600",
+              };
+              return (
+                <section className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8">
+                  <h2 className="font-display font-bold text-lg text-navy-900 flex items-center gap-2 mb-2">
+                    <Zap className="w-5 h-5 text-violet-500" />
+                    Recruiting DNA
+                  </h2>
+                  <p className="text-xs text-slate-500 mb-4">Player development outcomes — not just who was recruited, but what happened next.</p>
+
+                  {/* Keystone metric */}
+                  <div className="p-3 rounded-xl bg-violet-50 border border-violet-100 mb-4">
+                    <div className="text-xs font-bold text-violet-700">{dna.keystoneMetric}</div>
+                  </div>
+
+                  {/* Quick stats row */}
+                  <div className="grid grid-cols-4 gap-2 mb-5">
+                    <div className="p-2 rounded-lg bg-slate-50 border border-slate-100 text-center">
+                      <div className="font-mono text-base font-bold text-navy-900">{dna.retentionRate}%</div>
+                      <div className="text-[9px] text-slate-500 uppercase tracking-wider">Retention</div>
+                    </div>
+                    <div className="p-2 rounded-lg bg-slate-50 border border-slate-100 text-center">
+                      <div className="font-mono text-base font-bold text-navy-900">{dna.starUpgrade.avgRecruitedStar}★→{dna.starUpgrade.avgPeakEquivalent}★</div>
+                      <div className="text-[9px] text-slate-500 uppercase tracking-wider">Dev Delta</div>
+                    </div>
+                    <div className="p-2 rounded-lg bg-slate-50 border border-slate-100 text-center">
+                      <div className="font-mono text-base font-bold text-navy-900">{dna.proPlayersProduced.count}</div>
+                      <div className="text-[9px] text-slate-500 uppercase tracking-wider">Pro Players</div>
+                    </div>
+                    <div className="p-2 rounded-lg bg-slate-50 border border-slate-100 text-center">
+                      <div className="font-mono text-base font-bold text-navy-900">{dna.transferRecord.incoming}/{dna.transferRecord.outgoing}</div>
+                      <div className="text-[9px] text-slate-500 uppercase tracking-wider">Transfer In/Out</div>
+                    </div>
+                  </div>
+
+                  {/* Development Pipeline */}
+                  <h3 className="font-display font-bold text-sm text-navy-900 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <ArrowUpRight className="w-3.5 h-3.5 text-teal-500" />
+                    Development Pipeline
+                  </h3>
+                  <div className="space-y-3">
+                    {dna.developmentPipeline.map((player) => (
+                      <div key={player.playerName} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <div className="flex items-center justify-between mb-2">
+                          <div>
+                            <span className="font-display font-semibold text-sm text-navy-900">{player.playerName}</span>
+                            <span className="text-xs text-slate-400 ml-2">{player.position}</span>
+                          </div>
+                          <span className="text-[10px] font-medium text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded">Recruited as {player.recruitedAs}</span>
+                        </div>
+                        <div className="flex items-center gap-1 flex-wrap">
+                          {player.stages.map((stage, si) => (
+                            <div key={si} className="flex items-center gap-1">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${stageColors[stage.label] || "bg-slate-100 text-slate-600"}`}>
+                                {stage.label}
+                              </span>
+                              {si < player.stages.length - 1 && (
+                                <ChevronRight className="w-3 h-3 text-slate-300" />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-1.5 text-[11px] text-teal-600 font-medium">{player.peakAchievement}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Pro players */}
+                  {dna.proPlayersProduced.count > 0 && (
+                    <div className="mt-4 p-3 rounded-xl bg-green-50 border border-green-100">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Trophy className="w-3.5 h-3.5 text-green-600" />
+                        <span className="text-[10px] font-bold text-green-700 uppercase tracking-wider">Pro Pipeline</span>
+                      </div>
+                      <div className="text-xs text-green-700">{dna.proPlayersProduced.names.join(" · ")}</div>
+                    </div>
+                  )}
+                </section>
+              );
+            })()}
+
+            {/* Scouting Eye */}
+            {(() => {
+              const data = recruitingData[coach.id];
+              if (!data || data.highlights.length === 0) return null;
+              const insights = data.highlights.slice(0, 2).map(h => {
+                const insight = scoutingInsights.find(s => s.recruitHighlightId === h.id);
+                return { highlight: h, insight };
+              }).filter(x => x.insight);
+              if (insights.length === 0) return null;
+              return (
+                <section className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8">
+                  <h2 className="font-display font-bold text-lg text-navy-900 flex items-center gap-2 mb-2">
+                    <Crosshair className="w-5 h-5 text-indigo-500" />
+                    Scouting Eye
+                  </h2>
+                  <p className="text-xs text-slate-500 mb-4">What {coach.firstName} saw that other coaches missed.</p>
+                  <div className="space-y-4">
+                    {insights.map(({ highlight, insight }) => (
+                      <div key={highlight.id} className="p-4 rounded-xl bg-gradient-to-br from-indigo-50/50 to-white border border-indigo-100">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-display font-semibold text-sm text-navy-900">{highlight.playerName}</span>
+                          <span className="text-xs text-slate-400">{highlight.position} · {highlight.highSchool}</span>
+                          <span className="ml-auto px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-700">{highlight.starRating}★</span>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex items-start gap-2">
+                            <Eye className="w-3.5 h-3.5 text-indigo-500 shrink-0 mt-0.5" />
+                            <div>
+                              <div className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider mb-0.5">What I Saw</div>
+                              <p className="text-xs text-slate-600 leading-relaxed">{insight!.whatISaw}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <Lightbulb className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                            <div>
+                              <div className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-0.5">What Others Missed</div>
+                              <p className="text-xs text-slate-600 leading-relaxed">{insight!.whatOthersMissed}</p>
+                            </div>
+                          </div>
+                        </div>
+                        {insight!.linkedClipId && (
+                          <Link href={`/coach/${coach.id}/film`} className="inline-flex items-center gap-1 mt-2.5 px-2.5 py-1 rounded-lg bg-white border border-indigo-200 text-[10px] font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors">
+                            <Film className="w-3 h-3" /> Watch linked film
+                          </Link>
+                        )}
+                        <div className="mt-2 text-[11px] text-teal-600 font-medium flex items-center gap-1">
+                          <ArrowUpRight className="w-3 h-3" />
+                          Now: {highlight.currentStatus}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              );
+            })()}
+
             {/* Endorsements preview */}
             {coach.endorsements.length > 0 && (
               <section className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8">
@@ -482,6 +694,79 @@ export default function CoachProfilePage({
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* System Fit */}
+            {(() => {
+              const fit = systemFitProfiles[coach.id];
+              if (!fit) return null;
+              const allSchemes = [
+                ...fit.offensiveSchemes.map(s => ({ ...s, side: "OFF" })),
+                ...fit.defensiveSchemes.map(s => ({ ...s, side: "DEF" })),
+              ].sort((a, b) => b.proficiency - a.proficiency);
+              return (
+                <section className="bg-white rounded-2xl border border-slate-200/80 p-6">
+                  <h3 className="font-display font-bold text-sm text-navy-900 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <BarChart3 className="w-4 h-4 text-blue-500" />
+                    System Fit
+                  </h3>
+                  <div className="space-y-2.5 mb-4">
+                    {allSchemes.slice(0, 5).map((s) => (
+                      <div key={s.scheme}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs text-slate-600">{s.scheme}</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className={`text-[9px] font-bold px-1 py-0.5 rounded ${s.side === "OFF" ? "bg-teal-50 text-teal-600" : "bg-red-50 text-red-600"}`}>{s.side}</span>
+                            <span className="font-mono text-xs font-bold text-navy-900">{s.proficiency}%</span>
+                          </div>
+                        </div>
+                        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${s.proficiency >= 90 ? "bg-teal-500" : s.proficiency >= 75 ? "bg-blue-500" : "bg-slate-400"}`}
+                            style={{ width: `${s.proficiency}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Player Archetypes */}
+                  <div className="mb-4">
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Player Archetypes</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {fit.playerArchetypes.map((a) => (
+                        <span key={a} className="px-2 py-1 rounded-md bg-blue-50 text-blue-700 text-[10px] font-medium">{a}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Best Fit For */}
+                  <div className="mb-3">
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Best Fit For</div>
+                    <div className="space-y-1.5">
+                      {fit.bestFitFor.map((b) => (
+                        <div key={b} className="flex items-start gap-1.5 text-xs text-slate-600">
+                          <CheckCircle className="w-3 h-3 text-teal-500 shrink-0 mt-0.5" />
+                          {b}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Program Needs */}
+                  <div>
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Program Needs</div>
+                    <div className="space-y-1.5">
+                      {fit.programNeeds.map((n) => (
+                        <div key={n} className="flex items-start gap-1.5 text-xs text-slate-500">
+                          <Repeat2 className="w-3 h-3 text-amber-500 shrink-0 mt-0.5" />
+                          {n}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              );
+            })()}
+
             {/* Roles */}
             <section className="bg-white rounded-2xl border border-slate-200/80 p-6">
               <h3 className="font-display font-bold text-sm text-navy-900 uppercase tracking-wider mb-3">

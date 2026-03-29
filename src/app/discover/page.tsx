@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { coaches } from "@/data/coaches";
+import { coaches, coachClassifications, recruitingDNAData, systemFitProfiles } from "@/data/coaches";
 import {
   Search,
   Filter,
@@ -14,6 +14,10 @@ import {
   Eye,
   Users,
   Award,
+  Zap,
+  BarChart3,
+  ArrowUpRight,
+  Trophy,
 } from "lucide-react";
 
 const sportFilters = ["All", "Football", "Basketball"];
@@ -26,12 +30,21 @@ const levelFilters = [
   "Division I",
   "Professional",
 ];
+const coachTypeFilters = ["All Types", "Recruiter", "Developer", "Strategist", "Program Builder"];
+
+const identityColors: Record<string, string> = {
+  Recruiter: "bg-purple-500/10 text-purple-700 border-purple-200",
+  Developer: "bg-teal-500/10 text-teal-700 border-teal-200",
+  Strategist: "bg-blue-500/10 text-blue-700 border-blue-200",
+  "Program Builder": "bg-amber-500/10 text-amber-700 border-amber-200",
+};
 
 export default function DiscoverPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sportFilter, setSportFilter] = useState("All");
   const [levelFilter, setLevelFilter] = useState("All Levels");
   const [showFilters, setShowFilters] = useState(false);
+  const [coachTypeFilter, setCoachTypeFilter] = useState("All Types");
 
   const filtered = coaches.filter((coach) => {
     const matchesSearch =
@@ -52,7 +65,10 @@ export default function DiscoverPage() {
       coach.sport.toLowerCase() === sportFilter.toLowerCase();
     const matchesLevel =
       levelFilter === "All Levels" || coach.level === levelFilter;
-    return matchesSearch && matchesSport && matchesLevel;
+    const matchesCoachType =
+      coachTypeFilter === "All Types" ||
+      coachClassifications[coach.id]?.primaryIdentity === coachTypeFilter;
+    return matchesSearch && matchesSport && matchesLevel && matchesCoachType;
   });
 
   return (
@@ -137,6 +153,26 @@ export default function DiscoverPage() {
                   ))}
                 </div>
               </div>
+              <div>
+                <label className="block text-xs text-slate-400 mb-2 font-medium uppercase tracking-wider">
+                  Coach Type
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {coachTypeFilters.map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setCoachTypeFilter(f)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                        coachTypeFilter === f
+                          ? "bg-teal-500 text-white"
+                          : "bg-white/10 text-slate-300 hover:bg-white/20"
+                      }`}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -202,22 +238,59 @@ export default function DiscoverPage() {
                   </span>
                 </div>
 
-                {/* Systems preview */}
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {coach.systems.slice(0, 3).map((sys) => (
-                    <span
-                      key={sys}
-                      className="px-2 py-0.5 rounded text-[11px] bg-navy-900/5 text-navy-700 font-medium"
-                    >
-                      {sys}
-                    </span>
-                  ))}
-                  {coach.systems.length > 3 && (
-                    <span className="px-2 py-0.5 rounded text-[11px] text-slate-400">
-                      +{coach.systems.length - 3} more
-                    </span>
-                  )}
-                </div>
+                {/* Coach DNA Tags */}
+                {(() => {
+                  const cls = coachClassifications[coach.id];
+                  if (!cls) return null;
+                  return (
+                    <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${identityColors[cls.primaryIdentity] || "bg-slate-100 text-slate-600 border-slate-200"}`}>
+                        {cls.primaryIdentity}
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-50 text-slate-500">{cls.style}</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-50 text-slate-500">{cls.strengthSide}</span>
+                    </div>
+                  );
+                })()}
+
+                {/* Recruiting DNA Quick Stats */}
+                {(() => {
+                  const dna = recruitingDNAData[coach.id];
+                  const fit = systemFitProfiles[coach.id];
+                  if (!dna) return null;
+                  const topScheme = fit ? [...fit.offensiveSchemes, ...fit.defensiveSchemes].sort((a, b) => b.proficiency - a.proficiency)[0] : null;
+                  return (
+                    <div className="mt-3 grid grid-cols-3 gap-1.5">
+                      <div className="p-1.5 rounded-lg bg-violet-50 text-center">
+                        <div className="font-mono text-xs font-bold text-violet-700">{dna.starUpgrade.avgRecruitedStar}★→{dna.starUpgrade.avgPeakEquivalent}★</div>
+                        <div className="text-[8px] text-violet-500 uppercase">Dev Delta</div>
+                      </div>
+                      <div className="p-1.5 rounded-lg bg-teal-50 text-center">
+                        <div className="font-mono text-xs font-bold text-teal-700">{dna.retentionRate}%</div>
+                        <div className="text-[8px] text-teal-500 uppercase">Retention</div>
+                      </div>
+                      <div className="p-1.5 rounded-lg bg-green-50 text-center">
+                        <div className="font-mono text-xs font-bold text-green-700">{dna.proPlayersProduced.count}</div>
+                        <div className="text-[8px] text-green-500 uppercase">Pro Players</div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Top Scheme */}
+                {(() => {
+                  const fit = systemFitProfiles[coach.id];
+                  if (!fit) return null;
+                  const topScheme = [...fit.offensiveSchemes, ...fit.defensiveSchemes].sort((a, b) => b.proficiency - a.proficiency)[0];
+                  if (!topScheme) return null;
+                  return (
+                    <div className="mt-2 flex items-center gap-1.5 text-[11px] text-blue-600">
+                      <BarChart3 className="w-3 h-3" />
+                      <span className="font-medium">{topScheme.scheme}</span>
+                      <span className="font-mono font-bold">{topScheme.proficiency}%</span>
+                    </div>
+                  );
+                })()}
 
                 {/* Stats */}
                 <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-4 text-xs text-slate-400">

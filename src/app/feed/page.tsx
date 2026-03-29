@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/components/Toast";
 import { useAuth } from "@/lib/AuthContext";
-import { filmClips, coaches, type FilmClip } from "@/data/coaches";
+import { filmClips, coaches, scoutingInsights, coachClassifications, type FilmClip } from "@/data/coaches";
 import {
   Heart,
   MessageSquare,
@@ -26,6 +26,7 @@ import {
   Zap,
   Clapperboard,
   Filter,
+  Crosshair,
 } from "lucide-react";
 
 interface FeedPost {
@@ -307,6 +308,32 @@ export default function FeedPage() {
                     </button>
                   </div>
                 </div>
+
+                {/* Scouting Decision Badge */}
+                {(() => {
+                  const linkedInsight = scoutingInsights.find(s => s.linkedClipId === post.clipId);
+                  const cls = coachClassifications[post.coachId];
+                  if (!linkedInsight && !cls) return null;
+                  return (
+                    <div className="px-4 pb-2 flex flex-wrap items-center gap-2">
+                      {linkedInsight && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-100">
+                          <Crosshair className="w-3 h-3" /> Scouting Decision Linked
+                        </span>
+                      )}
+                      {cls && (
+                        <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${
+                          cls.primaryIdentity === "Recruiter" ? "bg-purple-50 text-purple-600" :
+                          cls.primaryIdentity === "Developer" ? "bg-teal-50 text-teal-600" :
+                          cls.primaryIdentity === "Strategist" ? "bg-blue-50 text-blue-600" :
+                          "bg-amber-50 text-amber-600"
+                        }`}>
+                          {cls.primaryIdentity}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {/* Caption */}
                 <div className="px-4 pb-3">

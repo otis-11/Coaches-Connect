@@ -2057,3 +2057,346 @@ export const feedPosts = [
     type: "insight",
   },
 ];
+
+// ── Recruiting DNA ────────────────────────────────────────────────────
+
+export interface PlayerDevelopment {
+  playerName: string;
+  position: string;
+  recruitedAs: string;
+  stages: { label: string; year: number }[];
+  currentStage: string;
+  peakAchievement: string;
+}
+
+export interface RecruitingDNA {
+  coachId: string;
+  retentionRate: number;
+  transferRecord: { incoming: number; outgoing: number; incomingSuccess: number };
+  starUpgrade: { avgRecruitedStar: number; avgPeakEquivalent: number };
+  proPlayersProduced: { count: number; names: string[] };
+  developmentPipeline: PlayerDevelopment[];
+  keystoneMetric: string;
+}
+
+export const recruitingDNAData: Record<string, RecruitingDNA> = {
+  "marcus-williams": {
+    coachId: "marcus-williams",
+    retentionRate: 87,
+    transferRecord: { incoming: 4, outgoing: 6, incomingSuccess: 3 },
+    starUpgrade: { avgRecruitedStar: 2.4, avgPeakEquivalent: 3.6 },
+    proPlayersProduced: { count: 2, names: ["Marcus Bell (Bengals UDFA)", "DeMarcus Ford (CFL — Hamilton)"] },
+    developmentPipeline: [
+      { playerName: "James Crawford", position: "QB", recruitedAs: "3-star", stages: [{ label: "Backup", year: 2022 }, { label: "Starter", year: 2023 }, { label: "All-Conference", year: 2024 }], currentStage: "All-Conference", peakAchievement: "2x All-SIAC First Team" },
+      { playerName: "Marcus Bell", position: "OL", recruitedAs: "2-star", stages: [{ label: "Redshirt", year: 2021 }, { label: "Rotation", year: 2022 }, { label: "Starter", year: 2023 }, { label: "All-Conference", year: 2024 }, { label: "NFL Camp", year: 2025 }], currentStage: "Pro", peakAchievement: "UDFA — Cincinnati Bengals" },
+      { playerName: "Darius Hamilton", position: "WR", recruitedAs: "2-star", stages: [{ label: "Scout Team", year: 2023 }, { label: "Starter", year: 2024 }], currentStage: "Starter", peakAchievement: "All-SIAC Honorable Mention" },
+      { playerName: "Jaylen Torres", position: "QB", recruitedAs: "3-star", stages: [{ label: "Redshirt", year: 2024 }], currentStage: "Redshirt", peakAchievement: "Scout Team Player of the Year" },
+    ],
+    keystoneMetric: "78% of 2-3★ recruits became starters within 2 years",
+  },
+  "sarah-chen": {
+    coachId: "sarah-chen",
+    retentionRate: 92,
+    transferRecord: { incoming: 2, outgoing: 2, incomingSuccess: 2 },
+    starUpgrade: { avgRecruitedStar: 2.7, avgPeakEquivalent: 3.5 },
+    proPlayersProduced: { count: 0, names: [] },
+    developmentPipeline: [
+      { playerName: "Anika Patel", position: "PG", recruitedAs: "3-star", stages: [{ label: "Starter", year: 2023 }, { label: "All-Conference", year: 2024 }], currentStage: "All-Conference", peakAchievement: "NWC Freshman of the Year" },
+      { playerName: "Destiny Moore", position: "C", recruitedAs: "2-star", stages: [{ label: "Starter", year: 2024 }], currentStage: "Starter", peakAchievement: "NWC Freshman All-Conference" },
+      { playerName: "Riley Tanaka", position: "SG", recruitedAs: "2-star", stages: [{ label: "Bench", year: 2022 }, { label: "6th Woman", year: 2023 }, { label: "Starter", year: 2024 }], currentStage: "Starter", peakAchievement: "NWC All-Defensive Team" },
+    ],
+    keystoneMetric: "92% player retention — highest in the NWC",
+  },
+  "devon-jackson": {
+    coachId: "devon-jackson",
+    retentionRate: 84,
+    transferRecord: { incoming: 5, outgoing: 4, incomingSuccess: 4 },
+    starUpgrade: { avgRecruitedStar: 2.6, avgPeakEquivalent: 3.4 },
+    proPlayersProduced: { count: 1, names: ["Marquis Brown (NFL — Titans PS)"] },
+    developmentPipeline: [
+      { playerName: "Keenan Wright", position: "CB", recruitedAs: "3-star", stages: [{ label: "Rotation", year: 2023 }, { label: "Starter", year: 2024 }, { label: "All-Conference", year: 2024 }], currentStage: "All-Conference", peakAchievement: "All-OVC Second Team, 4 INTs" },
+      { playerName: "Tre'von Davis", position: "S", recruitedAs: "3-star", stages: [{ label: "Starter", year: 2024 }], currentStage: "Starter", peakAchievement: "OVC Freshman DPOW (3x)" },
+      { playerName: "Marquis Brown", position: "CB", recruitedAs: "2-star", stages: [{ label: "Bench", year: 2020 }, { label: "Starter", year: 2021 }, { label: "All-Conference", year: 2022 }, { label: "All-American HM", year: 2023 }, { label: "NFL PS", year: 2024 }], currentStage: "Pro", peakAchievement: "Titans Practice Squad" },
+    ],
+    keystoneMetric: "3 All-Conference DBs developed from 2-3★ recruits in 4 years",
+  },
+  "antonio-reyes": {
+    coachId: "antonio-reyes",
+    retentionRate: 79,
+    transferRecord: { incoming: 3, outgoing: 5, incomingSuccess: 2 },
+    starUpgrade: { avgRecruitedStar: 2.2, avgPeakEquivalent: 3.8 },
+    proPlayersProduced: { count: 3, names: ["Diego Salazar (Rockets 2-way)", "Victor Herrera (G-League)", "Carlos Mendez (Mexico National Team)"] },
+    developmentPipeline: [
+      { playerName: "Diego Salazar", position: "PG", recruitedAs: "2-star", stages: [{ label: "Bench", year: 2019 }, { label: "6th Man", year: 2020 }, { label: "Starter", year: 2021 }, { label: "All-Conference", year: 2022 }, { label: "G-League", year: 2023 }, { label: "NBA 2-Way", year: 2024 }], currentStage: "Pro", peakAchievement: "Houston Rockets Two-Way Contract" },
+      { playerName: "Victor Herrera", position: "SF", recruitedAs: "Unranked", stages: [{ label: "Walk-On", year: 2020 }, { label: "Scholarship", year: 2021 }, { label: "Starter", year: 2022 }, { label: "G-League", year: 2023 }], currentStage: "Pro", peakAchievement: "G-League Roster — Texas Legends" },
+    ],
+    keystoneMetric: "Avg recruit goes from 2.2★ to pro-equivalent 3.8★ — highest development delta on the platform",
+  },
+  "tyler-brooks": {
+    coachId: "tyler-brooks",
+    retentionRate: 91,
+    transferRecord: { incoming: 2, outgoing: 1, incomingSuccess: 2 },
+    starUpgrade: { avgRecruitedStar: 2.1, avgPeakEquivalent: 3.2 },
+    proPlayersProduced: { count: 0, names: [] },
+    developmentPipeline: [
+      { playerName: "Ethan Mulder", position: "OT", recruitedAs: "Unranked (basketball convert)", stages: [{ label: "Learning", year: 2023 }, { label: "Starter", year: 2024 }, { label: "All-Conference", year: 2024 }], currentStage: "All-Conference", peakAchievement: "0 sacks allowed in 2024" },
+      { playerName: "Jake Sorensen", position: "C", recruitedAs: "2-star", stages: [{ label: "Redshirt", year: 2022 }, { label: "Backup", year: 2023 }, { label: "Starter", year: 2024 }], currentStage: "Starter", peakAchievement: "Team Captain, 95% assignment grade" },
+    ],
+    keystoneMetric: "Converted a basketball player into an All-Conference OT in 18 months",
+  },
+  "michelle-okafor": {
+    coachId: "michelle-okafor",
+    retentionRate: 88,
+    transferRecord: { incoming: 3, outgoing: 3, incomingSuccess: 3 },
+    starUpgrade: { avgRecruitedStar: 3.1, avgPeakEquivalent: 4.0 },
+    proPlayersProduced: { count: 1, names: ["Tiana Washington (WNBA Draft Prospect)"] },
+    developmentPipeline: [
+      { playerName: "Tiana Washington", position: "PF", recruitedAs: "4-star", stages: [{ label: "Starter", year: 2022 }, { label: "All-Conference", year: 2023 }, { label: "All-Conference", year: 2024 }, { label: "WNBA Prospect", year: 2025 }], currentStage: "WNBA Prospect", peakAchievement: "2x All-MEAC, MEAC Tournament MVP" },
+      { playerName: "Jade Rivers", position: "PG", recruitedAs: "3-star", stages: [{ label: "Starter", year: 2023 }, { label: "All-Conference", year: 2024 }], currentStage: "All-Conference", peakAchievement: "MEAC Freshman of the Year" },
+      { playerName: "Amara Diallo", position: "SG", recruitedAs: "2-star", stages: [{ label: "Bench", year: 2022 }, { label: "6th Woman", year: 2023 }, { label: "Starter", year: 2024 }], currentStage: "Starter", peakAchievement: "MEAC All-Defensive Team" },
+    ],
+    keystoneMetric: "Landed a top-100 recruit at an HBCU — first in program history",
+  },
+};
+
+// ── Scouting Insights (linked to recruit highlights) ──────────────────
+
+export interface ScoutingInsight {
+  recruitHighlightId: string;
+  whatISaw: string;
+  whatOthersMissed: string;
+  linkedClipId?: string;
+}
+
+export const scoutingInsights: ScoutingInsight[] = [
+  { recruitHighlightId: "rh-1", whatISaw: "His release was faster than any QB in the state — could process Cover 3 rotations pre-snap and get the ball out in under 2 seconds. That's rare at any level.", whatOthersMissed: "Everyone focused on his 40 time. I watched his eyes. He read defenses like a 4-year starter as a junior in high school.", linkedClipId: "clip-1" },
+  { recruitHighlightId: "rh-2", whatISaw: "Elite top-end speed with natural hands. At a 7-on-7 camp in Atlanta, he ran 3 routes I'd never coached and scored on all of them. Raw but explosive.", whatOthersMissed: "No varsity film because he transferred schools. Scouts wrote him off. I drove to Atlanta to see him in person." },
+  { recruitHighlightId: "rh-3", whatISaw: "Massive frame with quick feet — rare combination. He could mirror defensive linemen in pass pro despite being technically raw. His ceiling was obvious.", whatOthersMissed: "Listed as a tight end on most recruiting sites. I saw an offensive tackle. Nobody else projected him at that position.", linkedClipId: "clip-12" },
+  { recruitHighlightId: "rh-5", whatISaw: "Court vision that you can't teach. She made passes in traffic that most college point guards can't make. Her basketball IQ was off the charts.", whatOthersMissed: "She was committed to a D2 school because no D3 coach had seen her play live. I happened to be at her summer league game scouting someone else." },
+  { recruitHighlightId: "rh-6", whatISaw: "Motor. She never stopped moving, never took a play off. In a pack-line defense, that motor is worth more than height. She had both.", whatOthersMissed: "Everyone said she was too slow. They were watching her sprint. I was watching her move her feet in the post — she was a natural defender." },
+  { recruitHighlightId: "rh-7", whatISaw: "His hips. He could flip and run with any receiver in the OVC at 6'1\". Most corners that tall are stiff — he was fluid.", whatOthersMissed: "He played safety in high school. I saw a corner. Nobody else recruited him as a corner.", linkedClipId: "clip-8" },
+  { recruitHighlightId: "rh-8", whatISaw: "Football IQ. He diagnosed plays pre-snap like a linebacker but had DB speed. He was playing chess while everyone else played checkers.", whatOthersMissed: "FBS schools wanted him to gain 30 lbs and play linebacker. I told him he'd start at safety Day 1 at his natural weight." },
+  { recruitHighlightId: "rh-9", whatISaw: "His change of pace was elite — he could go from 0 to 100 in two dribbles. In pick-and-roll, that burst creates separation that can't be coached.", whatOthersMissed: "Zero national exposure from the Rio Grande Valley. No AAU circuit, no showcases. I only found him because a high school coach I trusted called me.", linkedClipId: "clip-10" },
+  { recruitHighlightId: "rh-10", whatISaw: "He was 6'5\" with basketball footwork. I watched him guard the best wing in the state and thought: that is an offensive tackle if he wants it.", whatOthersMissed: "He had never played football. Every football coach in Iowa ignored a 6'5\" athlete because he was not on their radar. I called his basketball coach." },
+  { recruitHighlightId: "rh-11", whatISaw: "The most competitive player I've ever recruited. In the biggest game of her high school career, she scored 28 points and grabbed 15 rebounds. She wanted the moment.", whatOthersMissed: "Power 5 schools saw her as a tweener — not tall enough for a 4, not skilled enough for a 3. I saw a mismatch nightmare in our motion offense.", linkedClipId: "clip-11" },
+  { recruitHighlightId: "rh-12", whatISaw: "Her handle was tighter than any guard in the DMV. She could break a press by herself. In our system, that is the most important skill a point guard can have.", whatOthersMissed: "Georgetown wanted her to be a combo guard. Virginia Tech saw her as a shooting guard. I told her she would run the show from Day 1." },
+];
+
+// ── System Fit Profile ────────────────────────────────────────────────
+
+export interface SystemFitProfile {
+  coachId: string;
+  offensiveSchemes: { scheme: string; proficiency: number }[];
+  defensiveSchemes: { scheme: string; proficiency: number }[];
+  playerArchetypes: string[];
+  recruitingGeoStrength: string[];
+  levelExperience: { level: string; years: number; wins: number; losses: number }[];
+  bestFitFor: string[];
+  programNeeds: string[];
+}
+
+export const systemFitProfiles: Record<string, SystemFitProfile> = {
+  "marcus-williams": {
+    coachId: "marcus-williams",
+    offensiveSchemes: [{ scheme: "Air Raid / RPO", proficiency: 95 }, { scheme: "Spread Offense", proficiency: 90 }, { scheme: "Tempo / No-Huddle", proficiency: 88 }, { scheme: "West Coast", proficiency: 72 }, { scheme: "Pro Style", proficiency: 55 }],
+    defensiveSchemes: [],
+    playerArchetypes: ["Dual-Threat QB", "Slot Receiver", "Speed RB", "Athletic OL"],
+    recruitingGeoStrength: ["Ohio", "Southeast (GA, FL, AL)"],
+    levelExperience: [{ level: "Division II", years: 2, wins: 18, losses: 6 }, { level: "FCS", years: 4, wins: 24, losses: 22 }, { level: "NAIA", years: 2, wins: 14, losses: 8 }],
+    bestFitFor: ["Program needing explosive offense", "School in need of QB development", "Team transitioning to spread/tempo"],
+    programNeeds: ["Needs a strong DC partner", "Best with athletic, versatile recruits"],
+  },
+  "sarah-chen": {
+    coachId: "sarah-chen",
+    offensiveSchemes: [{ scheme: "Motion Offense", proficiency: 92 }, { scheme: "Ball Screen Heavy", proficiency: 88 }, { scheme: "Transition Offense", proficiency: 85 }, { scheme: "Princeton / Continuity", proficiency: 78 }],
+    defensiveSchemes: [{ scheme: "Pack-Line Defense", proficiency: 95 }, { scheme: "2-3 Zone", proficiency: 80 }, { scheme: "Man-to-Man", proficiency: 75 }],
+    playerArchetypes: ["High-IQ Point Guard", "Stretch 4", "Motor Big", "Two-Way Wing"],
+    recruitingGeoStrength: ["Pacific Northwest (WA, OR)", "Northern California"],
+    levelExperience: [{ level: "Division III", years: 4, wins: 72, losses: 38 }],
+    bestFitFor: ["D3 program building defensive identity", "School valuing player retention", "Team needing pack-line defensive install"],
+    programNeeds: ["Best with high-IQ, coachable players", "Excels in close-knit program culture"],
+  },
+  "devon-jackson": {
+    coachId: "devon-jackson",
+    offensiveSchemes: [],
+    defensiveSchemes: [{ scheme: "Pattern Match Cover 3", proficiency: 95 }, { scheme: "Press-Man Coverage", proficiency: 92 }, { scheme: "Cover 1 Robber", proficiency: 85 }, { scheme: "Quarters / Cover 4", proficiency: 80 }],
+    playerArchetypes: ["Press Corner", "Rangy Safety", "Hybrid DB/LB", "Ball-Hawk FS"],
+    recruitingGeoStrength: ["Tennessee", "Georgia", "Deep South (AL, MS)"],
+    levelExperience: [{ level: "FCS", years: 6, wins: 38, losses: 34 }],
+    bestFitFor: ["Program needing secondary overhaul", "FCS school in the South", "Team building around coverage defense"],
+    programNeeds: ["Needs athletic DBs to run pattern-match", "Best with aggressive, competitive players"],
+  },
+  "antonio-reyes": {
+    coachId: "antonio-reyes",
+    offensiveSchemes: [{ scheme: "Spread Pick & Roll", proficiency: 95 }, { scheme: "Motion Offense", proficiency: 82 }, { scheme: "Dribble Drive", proficiency: 78 }],
+    defensiveSchemes: [{ scheme: "Switching Defense", proficiency: 85 }, { scheme: "Drop Coverage", proficiency: 75 }],
+    playerArchetypes: ["Scoring Point Guard", "Stretch Big", "3-and-D Wing", "Two-Way Guard"],
+    recruitingGeoStrength: ["South Texas / Rio Grande Valley", "Southern California"],
+    levelExperience: [{ level: "Professional", years: 2, wins: 0, losses: 0 }, { level: "Division I", years: 4, wins: 56, losses: 72 }],
+    bestFitFor: ["Program focused on player development to pro level", "School tapping into Texas/Latin American pipeline", "Team running PnR-heavy offense"],
+    programNeeds: ["Needs patience — develops over 3-4 year cycles", "Best with raw, athletic guards"],
+  },
+  "tyler-brooks": {
+    coachId: "tyler-brooks",
+    offensiveSchemes: [{ scheme: "Inside Zone / Gap Scheme", proficiency: 95 }, { scheme: "Power Run Game", proficiency: 90 }, { scheme: "Zone Blocking", proficiency: 92 }, { scheme: "RPO (Run Concepts)", proficiency: 70 }],
+    defensiveSchemes: [],
+    playerArchetypes: ["Developmental OL", "Converted Athletes", "Physical Run Blockers", "Smart Centers"],
+    recruitingGeoStrength: ["Iowa", "Nebraska", "Minnesota / Upper Midwest"],
+    levelExperience: [{ level: "NAIA", years: 3, wins: 22, losses: 11 }],
+    bestFitFor: ["Program needing OL culture overhaul", "NAIA/D3 school in the Midwest", "Team building identity through run game"],
+    programNeeds: ["Give him time to develop raw players", "Best with high-character, coachable athletes"],
+  },
+  "michelle-okafor": {
+    coachId: "michelle-okafor",
+    offensiveSchemes: [{ scheme: "Motion Offense", proficiency: 90 }, { scheme: "Ball Screen Heavy", proficiency: 88 }, { scheme: "Transition Offense", proficiency: 92 }, { scheme: "Press Break", proficiency: 95 }],
+    defensiveSchemes: [{ scheme: "2-3 Zone", proficiency: 85 }, { scheme: "Full Court Press", proficiency: 82 }, { scheme: "Man-to-Man", proficiency: 80 }],
+    playerArchetypes: ["Elite Recruits", "Post Players", "Two-Way Forwards", "Program-Changing Talent"],
+    recruitingGeoStrength: ["DMV (DC/MD/VA)", "North Carolina", "New York / Northeast"],
+    levelExperience: [{ level: "Division I", years: 12, wins: 213, losses: 123 }],
+    bestFitFor: ["D1 program ready to compete for championships", "HBCU building national brand", "School needing elite recruiting coordinator"],
+    programNeeds: ["Thrives in high-resource environments", "Best when given recruiting budget and autonomy"],
+  },
+};
+
+// ── Coach Classification Engine ───────────────────────────────────────
+
+export interface CoachClassification {
+  coachId: string;
+  primaryIdentity: "Recruiter" | "Developer" | "Strategist" | "Program Builder";
+  style: "Culture Builder" | "Tactician" | "Innovator" | "Relationship Coach";
+  recruitingFocus: "High School Pipeline" | "Transfer Portal" | "Developmental" | "Elite Talent";
+  strengthSide: "Offense" | "Defense" | "Both Sides" | "Player Development";
+  whyHireThisCoach: string;
+  topStrengths: string[];
+  coachingDNATags: string[];
+}
+
+export function classifyCoach(coachId: string): CoachClassification | null {
+  const coach = coaches.find(c => c.id === coachId);
+  if (!coach) return null;
+
+  const dna = recruitingDNAData[coachId];
+  const fit = systemFitProfiles[coachId];
+  const rData = recruitingData[coachId];
+  const clips = filmClips.filter(c => c.coachId === coachId);
+
+  let primaryIdentity: CoachClassification["primaryIdentity"] = "Developer";
+  if (rData && rData.stats.totalRecruitsSigned >= 30 && rData.stats.avgClassRating >= 2.8) primaryIdentity = "Recruiter";
+  else if (clips.length >= 4 && fit && (fit.offensiveSchemes.some(s => s.proficiency >= 90) || fit.defensiveSchemes.some(s => s.proficiency >= 90))) primaryIdentity = "Strategist";
+  else if (dna && dna.proPlayersProduced.count >= 2) primaryIdentity = "Developer";
+  else if (coach.yearsExperience >= 10 && coach.schoolRecords.length >= 3) primaryIdentity = "Program Builder";
+
+  let style: CoachClassification["style"] = "Tactician";
+  const endorsementText = coach.endorsements.map(e => e.text.toLowerCase()).join(" ");
+  if (endorsementText.includes("culture") || endorsementText.includes("relationship") || endorsementText.includes("family")) style = "Culture Builder";
+  else if (endorsementText.includes("innovate") || endorsementText.includes("creative") || endorsementText.includes("scheme")) style = "Innovator";
+  else if (endorsementText.includes("mentor") || endorsementText.includes("care") || endorsementText.includes("people")) style = "Relationship Coach";
+
+  let recruitingFocus: CoachClassification["recruitingFocus"] = "High School Pipeline";
+  if (dna && dna.transferRecord.incoming >= 4) recruitingFocus = "Transfer Portal";
+  if (rData && rData.stats.avgClassRating >= 3.0) recruitingFocus = "Elite Talent";
+  if (dna && dna.starUpgrade.avgPeakEquivalent - dna.starUpgrade.avgRecruitedStar >= 1.2) recruitingFocus = "Developmental";
+
+  let strengthSide: CoachClassification["strengthSide"] = "Player Development";
+  if (fit) {
+    const hasOffense = fit.offensiveSchemes.some(s => s.proficiency >= 85);
+    const hasDefense = fit.defensiveSchemes.some(s => s.proficiency >= 85);
+    if (hasOffense && hasDefense) strengthSide = "Both Sides";
+    else if (hasOffense) strengthSide = "Offense";
+    else if (hasDefense) strengthSide = "Defense";
+  }
+
+  const whyParts: string[] = [];
+  if (primaryIdentity === "Recruiter") whyParts.push(`Elite recruiter who has signed ${rData?.stats.totalRecruitsSigned || 0}+ recruits across ${rData?.stats.statesCovered || 0} states`);
+  if (primaryIdentity === "Developer") whyParts.push(`Proven developer who turns overlooked talent into impact players`);
+  if (primaryIdentity === "Strategist") whyParts.push(`Scheme architect with ${clips.length} documented play installations`);
+  if (primaryIdentity === "Program Builder") whyParts.push(`Experienced program builder with ${coach.yearsExperience} years across ${coach.schoolRecords.length} programs`);
+  if (dna?.proPlayersProduced.count) whyParts.push(`produced ${dna.proPlayersProduced.count} professional player${dna.proPlayersProduced.count > 1 ? "s" : ""}`);
+  if (dna?.retentionRate && dna.retentionRate >= 88) whyParts.push(`${dna.retentionRate}% player retention rate`);
+  const whyHireThisCoach = whyParts.join(". ") + ".";
+
+  const tags: string[] = [primaryIdentity, style];
+  if (dna?.proPlayersProduced.count) tags.push("Pro Pipeline");
+  if (dna?.retentionRate && dna.retentionRate >= 85) tags.push("High Retention");
+  if (rData && rData.stats.statesCovered >= 5) tags.push("Wide Network");
+  if (clips.length >= 4) tags.push("Film-First");
+  if (coach.sport === "football" && coach.roles.some(r => r.toLowerCase().includes("coordinator"))) tags.push("Coordinator");
+  if (coach.sport === "basketball" && coach.roles.some(r => r.toLowerCase().includes("head"))) tags.push("Head Coach Ready");
+  if (fit?.playerArchetypes.some(a => a.toLowerCase().includes("convert"))) tags.push("Athlete Converter");
+
+  const strengths: string[] = [];
+  if (fit) {
+    const topOff = [...fit.offensiveSchemes].sort((a, b) => b.proficiency - a.proficiency)[0];
+    const topDef = [...fit.defensiveSchemes].sort((a, b) => b.proficiency - a.proficiency)[0];
+    if (topOff) strengths.push(`${topOff.scheme} (${topOff.proficiency}%)`);
+    if (topDef) strengths.push(`${topDef.scheme} (${topDef.proficiency}%)`);
+  }
+  if (dna) strengths.push(`${dna.starUpgrade.avgRecruitedStar}★ → ${dna.starUpgrade.avgPeakEquivalent}★ development`);
+  if (rData) strengths.push(`${rData.stats.topRegion} recruiting`);
+
+  return {
+    coachId,
+    primaryIdentity,
+    style,
+    recruitingFocus,
+    strengthSide,
+    whyHireThisCoach,
+    topStrengths: strengths,
+    coachingDNATags: tags,
+  };
+}
+
+export const coachClassifications: Record<string, CoachClassification> = {};
+coaches.forEach(c => {
+  const cls = classifyCoach(c.id);
+  if (cls) coachClassifications[c.id] = cls;
+});
+
+// ── System Fit Calculator ─────────────────────────────────────────────
+
+export interface FitCriteria {
+  offensiveScheme?: string;
+  defensiveScheme?: string;
+  sport?: "football" | "basketball";
+  level?: string;
+  region?: string;
+}
+
+export function calculateFitScore(coachId: string, criteria: FitCriteria): number {
+  const fit = systemFitProfiles[coachId];
+  const coach = coaches.find(c => c.id === coachId);
+  if (!fit || !coach) return 0;
+
+  let score = 50;
+
+  if (criteria.sport && coach.sport === criteria.sport) score += 10;
+  else if (criteria.sport) score -= 20;
+
+  if (criteria.offensiveScheme) {
+    const match = fit.offensiveSchemes.find(s => s.scheme.toLowerCase().includes(criteria.offensiveScheme!.toLowerCase()));
+    if (match) score += Math.round(match.proficiency * 0.25);
+  }
+
+  if (criteria.defensiveScheme) {
+    const match = fit.defensiveSchemes.find(s => s.scheme.toLowerCase().includes(criteria.defensiveScheme!.toLowerCase()));
+    if (match) score += Math.round(match.proficiency * 0.25);
+  }
+
+  if (criteria.level) {
+    const lvlMatch = fit.levelExperience.find(l => l.level.toLowerCase().includes(criteria.level!.toLowerCase()));
+    if (lvlMatch) score += 10 + Math.min(lvlMatch.years * 2, 10);
+  }
+
+  if (criteria.region) {
+    const rData = recruitingData[coachId];
+    if (rData) {
+      const hasRegion = rData.territories.some(t =>
+        t.state.toLowerCase().includes(criteria.region!.toLowerCase()) ||
+        t.region.toLowerCase().includes(criteria.region!.toLowerCase())
+      );
+      if (hasRegion) score += 15;
+    }
+  }
+
+  return Math.min(100, Math.max(0, score));
+}
