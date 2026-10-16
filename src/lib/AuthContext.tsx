@@ -44,7 +44,7 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, firstName: string, lastName: string, sport: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, firstName: string, lastName: string, sport: string, extra?: Record<string, any>) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -100,27 +100,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, firstName: string, lastName: string, sport: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { first_name: firstName, last_name: lastName, sport },
-      },
-    });
-
-    if (!error && data.user) {
-      await supabase.from("cc_profiles").insert({
-        id: data.user.id,
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        sport,
+  const signUp = async (email: string, password: string, firstName: string, lastName: string, sport: string, extra?: Record<string, any>) => {
+    try {
+      // Call server-side API route that uses admin.createUser (bypasses email confirmation)
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, firstName, lastName, sport, extra }),
       });
-      await fetchProfile(data.user.id);
-    }
 
-    return { error };
+      const result = await res.json();
+
+      if (!res.ok) {
+        return { error: { message: result.error || "Signup failed" } };
+      }
+
+      // User created server-side — now sign in on the client to get a session
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        return { error: signInError };
+      }
+
+      return { error: null };
+    } catch (err: any) {
+      return { error: { message: err.message || "Network error during signup" } };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
