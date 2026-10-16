@@ -32,6 +32,16 @@ export default function SignupPage() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [title, setTitle] = useState("");
+  const [institution, setInstitution] = useState("");
+  const [level, setLevel] = useState("");
+  const [yearsExperience, setYearsExperience] = useState("");
+  const [specialty, setSpecialty] = useState("");
+  const [mentors, setMentors] = useState("");
+  const [openToOpps, setOpenToOpps] = useState(false);
+  const [philosophy, setPhilosophy] = useState("");
+  const [schemes, setSchemes] = useState("");
+  const [playerDev, setPlayerDev] = useState("");
   const [error, setError] = useState("");
   const [signupLoading, setSignupLoading] = useState(false);
 
@@ -47,7 +57,20 @@ export default function SignupPage() {
     }
     setSignupLoading(true);
     setError("");
-    const { error } = await signUp(email, password, firstName, lastName, sport);
+    const yearsMap: Record<string, number> = { "0-2": 1, "3-5": 4, "6-10": 8, "11-20": 15, "20+": 25 };
+    const extra: Record<string, any> = {
+      title: title || null,
+      institution: institution || null,
+      level: level || null,
+      years_experience: yearsMap[yearsExperience] || 0,
+      philosophy: philosophy || null,
+      bio: playerDev || null,
+      systems: schemes ? schemes.split(",").map((s: string) => s.trim()).filter(Boolean) : [],
+      open_to_opportunities: openToOpps,
+      availability_status: openToOpps ? "actively_looking" : "not_looking",
+      side_of_ball: specialty || null,
+    };
+    const { error } = await signUp(email, password, firstName, lastName, sport, extra);
     if (error) {
       setError(error.message);
       setSignupLoading(false);
@@ -216,6 +239,8 @@ export default function SignupPage() {
                 <input
                   type="text"
                   placeholder="e.g. Offensive Coordinator, Assistant Coach"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all"
                 />
               </div>
@@ -227,6 +252,8 @@ export default function SignupPage() {
                 <input
                   type="text"
                   placeholder="e.g. Central State University"
+                  value={institution}
+                  onChange={(e) => setInstitution(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all"
                 />
               </div>
@@ -243,7 +270,7 @@ export default function SignupPage() {
                 <label className="block text-sm font-medium text-slate-300 mb-2">
                   Competition Level
                 </label>
-                <select className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all">
+                <select value={level} onChange={(e) => setLevel(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all">
                   <option value="" className="bg-navy-900">Select level</option>
                   <option value="high-school" className="bg-navy-900">High School</option>
                   <option value="naia" className="bg-navy-900">NAIA</option>
@@ -259,7 +286,7 @@ export default function SignupPage() {
                 <label className="block text-sm font-medium text-slate-300 mb-2">
                   Years of Coaching Experience
                 </label>
-                <select className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all">
+                <select value={yearsExperience} onChange={(e) => setYearsExperience(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all">
                   <option value="" className="bg-navy-900">Select range</option>
                   <option value="0-2" className="bg-navy-900">0-2 years (GA / Entry Level)</option>
                   <option value="3-5" className="bg-navy-900">3-5 years</option>
@@ -276,6 +303,8 @@ export default function SignupPage() {
                 <input
                   type="text"
                   placeholder="e.g. Quarterbacks Coach, Defensive Coordinator"
+                  value={specialty}
+                  onChange={(e) => setSpecialty(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all"
                 />
               </div>
@@ -287,12 +316,14 @@ export default function SignupPage() {
                 <textarea
                   placeholder="List the head coaches or coordinators who have mentored you..."
                   rows={3}
+                  value={mentors}
+                  onChange={(e) => setMentors(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all resize-none"
                 />
               </div>
 
               <div className="flex items-center gap-3 p-4 rounded-xl bg-teal-500/10 border border-teal-500/20">
-                <input type="checkbox" id="open" className="rounded" />
+                <input type="checkbox" id="open" className="rounded" checked={openToOpps} onChange={(e) => setOpenToOpps(e.target.checked)} />
                 <label htmlFor="open" className="text-sm text-teal-400 font-medium cursor-pointer">
                   I&apos;m open to new coaching opportunities
                 </label>
@@ -313,6 +344,8 @@ export default function SignupPage() {
                 <textarea
                   placeholder="Describe your approach to coaching, your values, and what sets you apart..."
                   rows={4}
+                  value={philosophy}
+                  onChange={(e) => setPhilosophy(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all resize-none"
                 />
               </div>
@@ -324,6 +357,8 @@ export default function SignupPage() {
                 <textarea
                   placeholder="e.g. Air Raid, RPO Heavy, Pack-Line Defense, Motion Offense..."
                   rows={2}
+                  value={schemes}
+                  onChange={(e) => setSchemes(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all resize-none"
                 />
               </div>
@@ -335,6 +370,8 @@ export default function SignupPage() {
                 <textarea
                   placeholder="How do you approach developing players? What are your key areas of focus?"
                   rows={3}
+                  value={playerDev}
+                  onChange={(e) => setPlayerDev(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 transition-all resize-none"
                 />
               </div>
@@ -434,7 +471,7 @@ export default function SignupPage() {
         {/* Sign-in link */}
         <p className="text-center text-sm text-slate-500 mt-8">
           Already have an account?{" "}
-          <Link href="#" className="text-teal-400 hover:text-teal-300 font-medium">
+          <Link href="/login" className="text-teal-400 hover:text-teal-300 font-medium">
             Sign in
           </Link>
         </p>

@@ -23,6 +23,8 @@ import {
   TrendingUp,
   MessageSquare,
   Bell,
+  UserPlus,
+  Loader2,
 } from "lucide-react";
 
 // Mock admin stats
@@ -65,7 +67,7 @@ const managedOpportunities = [
 ];
 
 export default function AdminPage() {
-  const { profile } = useAuth();
+  const { profile, session, loading: authLoading } = useAuth();
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "content" | "opportunities" | "reports">("overview");
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,6 +76,62 @@ export default function AdminPage() {
   const [flagged, setFlagged] = useState(flaggedPosts);
   const [opps, setOpps] = useState(managedOpportunities);
   const [expandedUser, setExpandedUser] = useState<string | null>(null);
+
+  // Create User state
+  const [showCreateUser, setShowCreateUser] = useState(false);
+  const [newUser, setNewUser] = useState({ firstName: "", lastName: "", email: "", password: "", sport: "football", role: "coach", isAdmin: false });
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState("");
+
+  const handleCreateUser = async () => {
+    if (!newUser.firstName || !newUser.lastName || !newUser.email || !newUser.password) {
+      setCreateError("All fields are required");
+      return;
+    }
+    if (newUser.password.length < 6) {
+      setCreateError("Password must be at least 6 characters");
+      return;
+    }
+    setCreateLoading(true);
+    setCreateError("");
+    try {
+      const res = await fetch("/api/auth/admin-create-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify(newUser),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        setCreateError(result.error || "Failed to create user");
+        setCreateLoading(false);
+        return;
+      }
+      // Add to local list
+      setUsers((prev) => [
+        ...prev,
+        {
+          id: result.userId,
+          name: `${newUser.firstName} ${newUser.lastName}`,
+          email: newUser.email,
+          sport: newUser.sport === "football" ? "Football" : "Basketball",
+          role: newUser.role,
+          verified: true,
+          status: "active",
+          joined: new Date().toISOString().split("T")[0],
+        },
+      ]);
+      showToast(`Account created for ${newUser.firstName} ${newUser.lastName}`);
+      setNewUser({ firstName: "", lastName: "", email: "", password: "", sport: "football", role: "coach", isAdmin: false });
+      setShowCreateUser(false);
+    } catch (err: any) {
+      setCreateError(err.message || "Network error");
+    } finally {
+      setCreateLoading(false);
+    }
+  };
 
   const filteredUsers = users.filter(
     (u) => u.name.toLowerCase().includes(searchQuery.toLowerCase()) || u.email.toLowerCase().includes(searchQuery.toLowerCase())
@@ -224,7 +282,50 @@ export default function AdminPage() {
                   className="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/30"
                 />
               </div>
+              <button
+                onClick={() => setShowCreateUser(!showCreateUser)}
+                className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg hover:bg-purple-500 transition-all"
+              >
+                <UserPlus className="w-4 h-4" />
+                Create User
+              </button>
             </div>
+
+            {/* Create User Form */}
+            {showCreateUser && (
+              <div className="p-5 border-b border-slate-100 bg-purple-50/30">
+                <h4 className="font-display font-bold text-sm text-navy-900 mb-4">Create New Account</h4>
+                {createError && (
+                  <div className="mb-3 p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-600 text-xs">{createError}</div>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <input type="text" placeholder="First Name" value={newUser.firstName} onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })} className="px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/30" />
+                  <input type="text" placeholder="Last Name" value={newUser.lastName} onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })} className="px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/30" />
+                  <input type="email" placeholder="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} className="px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/30" />
+                  <input type="password" placeholder="Password (min 6 chars)" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} className="px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/30" />
+                  <select value={newUser.sport} onChange={(e) => setNewUser({ ...newUser, sport: e.target.value })} className="px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/30">
+                    <option value="football">Football</option>
+                    <option value="basketball">Basketball</option>
+                  </select>
+                  <select value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })} className="px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/30">
+                    <option value="coach">Coach</option>
+                    <option value="admin">Admin</option>
+                    <option value="recruiter">Recruiter</option>
+                  </select>
+                </div>
+                <div className="flex items-center gap-4 mt-3">
+                  <label className="flex items-center gap-2 text-xs text-slate-600">
+                    <input type="checkbox" checked={newUser.isAdmin} onChange={(e) => setNewUser({ ...newUser, isAdmin: e.target.checked })} className="rounded" />
+                    Grant admin access
+                  </label>
+                  <div className="flex-1" />
+                  <button onClick={() => setShowCreateUser(false)} className="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 transition-all">Cancel</button>
+                  <button onClick={handleCreateUser} disabled={createLoading} className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-xs font-semibold rounded-lg hover:bg-purple-500 transition-all disabled:opacity-50">
+                    {createLoading ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Creating...</> : "Create Account"}
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
